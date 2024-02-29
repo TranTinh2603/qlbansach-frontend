@@ -1,11 +1,32 @@
 import { createWebHistory, createRouter } from "vue-router";
 import Product from "@/views/ProductView.vue";
-// import ProductDetail from "@/views/ProductDetailView.vue";
 
 const routes = [
     {
         path: "/",
-        name: "product",
+        name: "home",
+        component: () => import("@/views/HomeView.vue"),
+    },
+    {
+        path: "/book/detail/:id",
+        name: "book.detail",
+        component: () => import("@/views/BookDetailView.vue"),
+        props: true
+    },
+    {
+        path: "/author/detail/:id",
+        name: "author.detail",
+        component: () => import("@/views/AuthorDetailView.vue"),
+        props: true
+    },
+    {
+        path: "/my-books",
+        name: "book.my-books",
+        component: () => import("@/views/MyBooksView.vue"),
+    },
+    {
+        path: "/shop",
+        name: "shop",
         component: Product,
     },
     {
@@ -14,8 +35,8 @@ const routes = [
         component: () => import("@/views/LoginView.vue"),
     },
     {
-        path: "/detail/:id",
-        name: "product.detail",
+        path: "/detail-shop/:id",
+        name: "product.detail-shop",
         component: () => import("@/views/ProductDetailView.vue"),
         props: true
     },
@@ -46,7 +67,7 @@ const routes = [
         name: "customer.order",
         component: () => import("@/views/CustomerOrder.vue")
     },
-        {
+    {
         path: "/customer/order/detail/:msdh",
         name: "customer.order.detail",
         component: () => import("@/views/OrderDetailView.vue"),
@@ -59,7 +80,7 @@ const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes
 });
-router.beforeEach((to, from ,next) => {
+router.beforeEach((to, from, next) => {
     window.scrollTo(0, 0);
     next();
 });

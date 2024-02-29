@@ -1,7 +1,7 @@
 <template>
     <div class="d-flex" >
         <button class="border-0 bg-white"  v-for="(item, index) in category" :key="index" v-on:click="handleCategory(item.MaTheLoai)">
-            <img src="https://cdn0.fahasa.com/media/wysiwyg/Duy-VHDT/thieunhis2.jpg">
+            <img :src="item.HinhTL">
             <p class="mb-0">{{ item.TenTheLoai }}</p>
         </button>
     </div>
@@ -24,5 +24,8 @@ export default {
 </script>
 
 <style scoped>
-
+    img {
+        height: 100px;
+        width: 100px;
+    }
 </style>

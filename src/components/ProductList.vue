@@ -32,22 +32,16 @@ export default {
                     >  
         <button class="text-start border-0 bg-white">
             <div class="position-relative text-center">
-                    <img src="https://cdn0.fahasa.com/media/catalog/product/8/9/8934974178637.jpg" alt="">
+                    <img :src="product.HinhHH" alt="">
                     <label v-if="this.discount" class="label-pro-sale position-absolute ">{{ this.discount }}%</label>
             </div>
                 <p>{{ product.TenHH }}</p>
                 <p class="fw-light ">{{ product.MoTaHH }}</p>
                 <p class="text-danger fw-bold">{{ calculateDiscountedPrice(product.Gia) }}đ</p>
-                <p class="text-decoration-line-through text-secondary">{{ product.Gia }}đ</p>
-                
-              
-               
+                <p class="text-decoration-line-through text-secondary">{{ product.Gia }}đ</p>    
         </button>
            </router-link>  
         </div>
-    </div>
-     <div class="text-center mb-3">
-        <button class="btn btn-outline-primary">Xem thêm</button>
     </div>
 </template>
 <style scoped>
@@ -59,7 +53,7 @@ export default {
     p{
         margin: 0;
         overflow: hidden;
-        width: 100%;
+        width: 150px;
         text-overflow: ellipsis;
         white-space: nowrap;
     }

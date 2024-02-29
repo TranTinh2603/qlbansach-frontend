@@ -16,7 +16,7 @@
         <div class="row bg-white rounded-2 p-2" v-for="(product, index) in cart" :key="index">
             <div class="col-7 d-flex">
                 <input type="checkbox" v-model="product.selected">
-                <img src="https://cdn0.fahasa.com/media/catalog/product//8/9/8934974178637.jpg" alt="" class="w-25">
+                <img :src="product.product.HinhHH" alt="" class="w-25">
                 <div class="d-flex flex-column justify-content-between">
                     <p class="m-0">{{ product.product.TenHH }}</p>
                     <strong class="m-0">{{ product.product.Gia }}đ</strong>
@@ -38,9 +38,32 @@
             <hr class="mt-2">
         </div>
         <div class="mt-3">
-            <p class="m-0">Tổng tiền các sản phẩm đã chọn: <strong>{{ totalSelectedAmount }}đ</strong></p>
+           
+            <div class="row bg-white rounded-2 p-2 mb-2">
+                    <div class="col-12">
+                        <h4>Hình thức thanh toán và phí vận chuyển</h4>
+                    </div>
+                    <div class="col-4">
+                        <label for="paymentMethod">Hình thức thanh toán:</label>
+                        <select v-model="selectedPaymentMethod" id="paymentMethod">
+                            <option value="cash">Thanh toán khi nhận hàng</option>
+                            <option value="bankTransfer">Chuyển khoản ngân hàng</option>
+                        </select>
+                    </div>
+                    <div class="col-4">
+                        <p for="shippingFee">Phí vận chuyển: <strong>{{ totalSelectedAmount===0? 0 :this.shippingFee }}đ</strong></p>
+                    </div>
+                    <div class="col-4">
+                        <h4>Thông tin nhận hàng</h4>
+                        <p>Họ Tên: <strong>{{ this.user.HoTenKH }}</strong></p>
+                        <p>Địa Chỉ: <strong>{{ this.user.DiaChi }}</strong></p>
+                        <p>Số điện thoại: <strong>{{ this.user.SoDienThoai }}</strong></p>
+                    </div>
+                </div>
+            <p class="m-0">Tổng tiền các sản phẩm đã chọn: <strong>{{ totalSelectedAmount===0 ? totalSelectedAmount : totalSelectedAmount + this.shippingFee }}đ</strong></p>
             <button class="btn btn-primary mt-2" @click="placeOrder">Đặt hàng</button>
         </div>
+        
     </div>
 </template>
 
@@ -55,6 +78,8 @@ export default {
             totalProduct: 0,
             selectedAll: false,
             user: "",
+            selectedPaymentMethod: "cash",
+            shippingFee: 23000,
         };
     },
      computed: {
@@ -88,6 +113,8 @@ export default {
             };
             
             const orderNumber = Date.now().toString() + Math.floor(Math.random() * 1000);
+            const date = new Date();
+            const formattedDate = date.toLocaleDateString('en-GB')
             const orderData = {
                 SoDonDH: orderNumber,
                 HH: selectedProducts.map((product) => ({
@@ -100,9 +127,10 @@ export default {
             const orderInfor = {
                 SoDonDH: orderNumber,
                 MSKH: this.user.MSKH,
+                NgayDH: formattedDate,
                 TrangThaiDH: 0
             };
-            console.log(orderInfor);
+            console.log(orderInfor.NgayDH);
             try {
                 const response = await OrderDetailService.create(orderData);
                 console.log(orderData.HH);
@@ -157,9 +185,10 @@ export default {
             }
         },
         removeProduct(index) {
+            if(confirm('Bạn có chắc chắn muốn xóa?')){
             this.cart.splice(index, 1);
             this.handleTotalProduct();
-            this.saveCartToLocalStorage();
+            this.saveCartToLocalStorage();}
         },
     },
 

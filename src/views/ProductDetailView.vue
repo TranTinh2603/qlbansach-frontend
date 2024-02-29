@@ -27,7 +27,7 @@
                 } catch (error) {
                     console.log(error);
                 }
-            }
+            },
         },
         mounted() {
             this.getProductId(this.id);

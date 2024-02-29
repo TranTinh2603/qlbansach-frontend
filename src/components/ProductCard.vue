@@ -36,7 +36,8 @@ export default {
         },
 
         reduceQuantity(){
-            this.quantity--;
+            if (this.quantity > 0 ) {
+            this.quantity--;}
         },
 
     }
@@ -45,7 +46,7 @@ export default {
 <template>
     <div class="row bg-white rounded-2 p-3">
         <div class="col-5">
-            <img src="https://cdn0.fahasa.com/media/catalog/product/8/9/8934974178637.jpg" alt="Mắt Biếc" class="w-100">
+            <img :src="this.product.HinhHH" alt="Mắt Biếc" class="w-100">
         </div>
         <div class="col-7">
             <h4> {{ this.product.TenHH }} </h4>
@@ -60,7 +61,6 @@ export default {
             </div>
              <div class="d-flex justify-content-center mt-5">
                 <button class="btn btn-outline-success me-4" v-on:click="addToCart(this.product, this.quantity)">Thêm vào giỏ hàng <i class="fa-solid fa-cart-shopping"></i></button>
-                <button class="btn btn-success w-25">Mua ngay</button>
             </div>
         </div>
     </div>

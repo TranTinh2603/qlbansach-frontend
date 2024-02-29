@@ -23,14 +23,6 @@
             <div class="d-flex justify-content-center mt-3">
                 <button class="btn btn-success" type="button" @click="toggleRegister">{{ data.isRegistering ? 'Đăng nhập' : 'Đăngký' }}</button>
             </div>
-            <div class="d-flex justify-content-center mt-3">
-                <button class="btn btn-outline-primary" type="submit"> <i class="fa-brands fa-facebook me-2"></i>Đăng nhập
-                    bằng Facebook</button>
-            </div>
-            <div class="d-flex justify-content-center mt-3">
-                <button class="btn btn-outline-primary" type="submit"><i class="fa-brands fa-google me-2"></i>Đăng nhập bằng
-                    Google</button>
-            </div>
         </form>
     </div>
 </template>
@@ -39,6 +31,7 @@ export default {
     data() {
         return {
             data: {
+                mskh: '',
                 email: '',
                 password: '',
                 confirmPassword: '',
@@ -48,7 +41,9 @@ export default {
     },
     methods: {
         handleSubmit() {
+             const customerNumber = Date.now().toString() + Math.floor(Math.random() * 1000);
             if (this.validatePasswords()) {
+                this.data.mskh = customerNumber;
                 this.$emit('login', this.data);
             } else {
                 alert('Nhập lại mật khẩu sai!');

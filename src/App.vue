@@ -33,15 +33,20 @@ export default {
 <template>
   <div id="app">
     <AppHeader />
-    <div class="container mt-3 p-3">
+    <div>
       <router-view />
     </div>
     <AppFooter />
   </div>
 </template>
 <style>
-  .page {
-    max-width: 400px;
-    margin: auto;
+  *{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  a{
+    text-decoration: none;
+    color: black;
   }
 </style>

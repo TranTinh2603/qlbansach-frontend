@@ -12,9 +12,10 @@
                 <p class="m-0">Thành tiền</p>
             </div>
         </div>
+        <hr>
         <div class="row bg-white rounded-2 p-2" v-for="(product, index) in orderDetail.HH" :key="index">
             <div class="col-7 d-flex">
-                <img src="https://cdn0.fahasa.com/media/catalog/product/8/9/8934974178637.jpg" alt="" class="w-25">
+                <img :src="product.product.HinhHH" alt="" class="w-25">
                 <div class="d-flex flex-column justify-content-between">
                     <p class="m-0">{{ product.product && product.product.TenHH ? product.product.TenHH : '' }}</p>
                     <strong class="m-0">{{ product.product && product.product.Gia ? product.product.Gia : '' }}đ</strong>
@@ -24,7 +25,17 @@
                 <p class="text-center"> {{ product.SoLuong }}</p>
             </div>
             <div class="col-3 d-flex align-items-center">
-                <strong class="m-0 text-danger">{{ product.product && product.GiaDatHang ? product.GiaDatHang : 0 }}đ</strong>
+                <strong class="m-0 text-danger">{{ totalAmount(product.product && product.product.Gia ? product.product.Gia : '', product.SoLuong) }}đ</strong>
+            </div>
+        </div>
+       
+        <div class="d-flex justify-content-between">
+            <div class="d-flex align-items-center"> <p class="m-0">Tổng: <strong>{{ this.orderDetail.HH[0] ? this.orderDetail.HH[0].GiaDatHang : '' }}đ</strong></p></div> 
+            <div class="me-5">
+                <h4>Thông tin nhận hàng</h4>
+                <p>Họ và tên: <strong>{{ this.customer.HoTenKH }}</strong></p>
+                <p>Địa chỉ: <strong>{{ this.customer.DiaChi }}</strong></p>
+                <p>Số điện thoại: <strong>{{ this.customer.SoDienThoai }}</strong></p>
             </div>
         </div>
     </div>
@@ -33,13 +44,14 @@
 <script>
 import OrderDetailService from "../services/orderDetail.service";
 import ProductService from "../services/product.service";
-
+import CustomerService from "../services/customer.service"
 export default {
     data() {
         return {
             orderDetail: {
                 HH: [],
             },
+            customer: {},
         };
     },
     props: {
@@ -67,6 +79,19 @@ export default {
                 console.log(error);
             }
         },
+        async getUser() {
+            const getEmail = localStorage.getItem('authState');
+            if (getEmail) {
+                const result = getEmail ? JSON.parse(getEmail) : {};
+                this.customer = await CustomerService.getByEmail(result.user);
+                console.log(this.customer);
+            }
+        },
+         totalAmount(gia, sl) {
+            const donGia = gia.replace(".", "");
+            const result = parseInt(donGia) * parseInt(sl);
+            return result;
+        },
         reduceQuantity(index) {
             if (this.orderDetail.HH[index].product.SoLuong > 1) {
                 this.orderDetail.HH[index].product.SoLuong--;
@@ -80,6 +105,7 @@ export default {
     },
     mounted() {
         this.getOrderDetail(this.msdh);
+        this.getUser();
     },
 };
 </script>

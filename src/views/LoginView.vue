@@ -23,7 +23,7 @@ export default {
                     console.log(data);
                     const document = await RegisterService.create(data);
                     console.log(document);
-                    alert('Registration successful');
+                    alert(document.message ? document.message : 'Đăng kí thành công');
                 } else {
                     console.log(data);
                     const token = await LoginService.findOne(data);
@@ -35,7 +35,7 @@ export default {
                     }
                 }
             } catch (error) {
-                if (error.response && error.response.status === 401) {
+                if (error.response && error.response.status === 404 || error.response.status === 401 ) {
                     alert('Tên đăng nhập hoặc mật khẩu không đúng. Vui lòng thử lại.');
                 } else {
                     this.handleError(error);

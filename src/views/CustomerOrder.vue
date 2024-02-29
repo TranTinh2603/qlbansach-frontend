@@ -14,9 +14,10 @@
             <tbody class="table-group-divider text-center">
                 <tr v-for="order in orders" :key="order.SoDonDH">
                     <td>{{ order.SoDonDH }}</td>
-                    <td>Otto</td>
-                    <td>Otto</td>
-                    <td>{{ (order.TrangThaiDH === 0) ? 'Chưa xác nhận': 'Đã xác nhận' }}</td>
+                    <td>{{ order.NgayDH }}</td>
+                    <td>{{ order.NgayGH }}</td>
+                    <td v-if="order.TrangThaiDH == 0" class="text-danger">{{ (order.TrangThaiDH === 0) ? 'Chưa xác nhận': 'Đã xác nhận' }}</td>
+                    <td v-else="order.TrangThaiDH == 1" class="text-success">{{ (order.TrangThaiDH === 0) ? 'Chưa xác nhận' : 'Đã xác nhận' }}</td>
                     <td><button @click="handleOrderDetail(order.SoDonDH)" class="btn btn-sm btn-primary"><i class="fa-solid fa-circle-info"></i></button></td>
                 </tr>
             </tbody>
@@ -27,7 +28,6 @@
 <script>
 import CustomerService from '../services/customer.service';
 import OrderService from '../services/order.service';
-
 export default {
     data() {
         return {
