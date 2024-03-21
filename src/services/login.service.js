@@ -1,12 +1,12 @@
 import createApiClient from "./api.service";
 
-class LoginService{
+class LoginService {
     constructor(baseUrl = "/api/login") {
         this.api = createApiClient(baseUrl);
     }
 
-    async findOne(email) {
-        return (await this.api.post("/", email)).data;
+    async findByEmail(data) {
+        return (await this.api.post("/", data)).data;
     }
 }
 

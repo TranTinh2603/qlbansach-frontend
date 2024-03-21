@@ -50,7 +50,11 @@
     </div>
 </template>
 <script>
-
+export default {
+    props: {
+        books: {type: Array ,  default: []}
+    }
+}
 </script>
 <style scoped>
 .content-recommend{

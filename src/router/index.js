@@ -14,7 +14,7 @@ const routes = [
         props: true
     },
     {
-        path: "/author/detail/:id",
+        path: "/author/detail/:name",
         name: "author.detail",
         component: () => import("@/views/AuthorDetailView.vue"),
         props: true
@@ -23,6 +23,32 @@ const routes = [
         path: "/my-books",
         name: "book.my-books",
         component: () => import("@/views/MyBooksView.vue"),
+    },
+    {
+        path: "/friends",
+        name: "friend",
+        component: () => import("@/views/MyFriendsView.vue"),
+    },
+    {
+        path: "/friends/find/:searchText",
+        name: "friend.find",
+        component: () => import("@/views/FindFriendView.vue"),
+        props: true
+    },
+    {
+        path: "/user/profile",
+        name: "user.profile",
+        component: () => import("@/views/MyProfileView.vue"),
+    },
+    {
+        path: "/user/messages",
+        name: "user.messages",
+        component: () => import("@/views/MessageView.vue"),
+    },
+    {
+        path: "/user/profile/edit",
+        name: "user.profile.edit",
+        component: () => import("@/views/EditProfileView.vue"),
     },
     {
         path: "/shop",

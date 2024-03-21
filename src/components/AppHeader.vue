@@ -203,8 +203,19 @@
                     <i class="fa-solid fa-users"></i>
                 </router-link>
            
-                <div class="container-action-content">
-                    <i class="fa-solid fa-user"></i>
+                <div class="dropdown">
+                    <div class="container-action-content" @click="toggleDropdown('user')">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <ul v-if="activeDropdown === 'user'" class="dropdown-menu-user">
+                        <h4>Trần Trung Tính</h4>
+                        <li><router-link to="/user/profile">Profile</router-link></li>
+                        <li><router-link to="/user/friends">Friends</router-link></li>
+                        <li><router-link to="/user/groups">Groups</router-link></li>
+                        <li><router-link to="/user/account-setting">Account Settings</router-link></li>
+                        <li><router-link to="/user/help">Help</router-link></li>
+                        <li><div>Sign out</div></li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -285,7 +296,7 @@ export default {
                 this.activeDropdown = dropdownName;
             }
         },
-         hideDropdown() {
+        hideDropdown() {
             this.activeDropdown = null;
         }
 
@@ -498,6 +509,27 @@ export default {
 
 .search-message > input {
     border: none;
+}
+
+.dropdown-menu-user{
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 1000;
+    min-width: 150px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 5px 0;
+}
+.dropdown-menu-user li a, .dropdown-menu-user h4 ,.dropdown-menu-user li div{
+  display: block;
+  padding: 10px;
+  color: #333;
+  text-decoration: none;
+}
+.dropdown-menu-user li a:hover, .dropdown-menu-user li div:hover {
+  background-color: #f0f0f0;
 }
 
 

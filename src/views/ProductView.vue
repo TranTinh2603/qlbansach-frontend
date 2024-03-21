@@ -78,7 +78,7 @@ export default {
         return {
             products: [],
             category: [],
-        }
+        };
     },
     methods: {
         async getCategory() {

@@ -1,183 +1,171 @@
-<template>
-    <div class="info-detail">
-        <h1 class="book-name">Dế mèn phiêu lưu kí</h1>
-        <p class="author-name">Tô hoài</p>
-        <div class="star-rate-book">
-            <i class="fa-regular fa-star"></i>
-            <i class="fa-regular fa-star"></i>
-            <i class="fa-regular fa-star"></i>
-            <i class="fa-regular fa-star"></i>
-            <i class="fa-regular fa-star"></i>
-            <h3>4.27</h3>
-            <div class="ratings-number">
-                <p>1234 ratings</p>
-                <div></div>
-                <p>123 reviews</p>
-            </div>
-        </div>
-        <div class="description">
-           <span>
-            Tác phẩm miêu tả cuộc phiêu lưu của một chú Dế Mèn qua thế giới loài vật và loài người. Những vấn đề nóng hổi như là: cái thiện và cái ác, chiến tranh và hòa bình, lí tưởng và lẽ sống được thể hiện một cách nhẹ nhàng, tinh tế mà sâu sắc.
-            Cậy mình là chàng dế cường tráng, Mèn dương dương tự đắc, cho mình là tay ghê gớm. Trải qua hai bài học đắt giá là cái chết của của dế Choắt và bị bác Xiến Tóc cắt đứt mất hai sợi râu mượt óng mà Mèn mới tỉnh ngộ, hiểu ra thế nào là lòng nhân ái và cái giá phải trả cho sự ngông nghênh của mình. Từ đó Mèn quyết chí đi chu du thiên hạ, chí hướng của Mèn càng được củng cố sau khi chú làm được việc có ích đầu tiên trong đời đó là cứu giúp chị Nhà Trò yếu đuối thoát nạn lũ nhện hung ác. Không những thế chú còn được sự ủng hộ hết lòng của mẹ kính yêu và kết giao được với người bạn tri kỉ là Dế Trũi.
-            Từ đây cuộc đời Mèn rẽ lối sang một trang hoàn toàn mới mẻ, các em có muốn khám phá tiếp không nào? Mèn đã trải qua những cuộc phiêu lưu vào thế giới các loài vật, vượt qua cơ man nào là rủi ro và biến cố, nhưng từng bước Mèn vươn lên tự điều chỉnh, tự nhận thức để trở thành con người giàu lí tưởng và ham hiểu biết với bản lĩnh kiên cường của một trai tráng đầu đội trời chân đập đất.
-           </span>
-        </div>
-        <hr>
-        <div class="information">
-            <h3>Information</h3>
-            <div class="information-detail">
-                <div class="title-information">
-                    <p>Category</p>
-                    <p>Format</p>
-                    <p>Published</p>
-                    <p>Language</p>
-                </div>
-                <div class="value-information">
-                    <p>Children</p>
-                    <p>300 pages, Paperback</p>
-                    <p>September 2, 2009 by Kim Đồng</p>
-                    <p>Vietnamese</p>
-                </div>
-            </div>
-        </div>
-        <hr>
-        <div class="about-the-author">
-            <h3>About the author</h3>
-            <div class="info-about-the-author">
-                <img src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/authors/1315238522i/4856561._UY200_CR32,0,200,200_.jpg" alt="">
-                <div class="name-author">
-                    <p>Tô hoài</p>
-                    <div class="book-and-follower">
-                        <p>82 books</p>
-                        <div></div>
-                        <p>123 followers</p>
-                    </div>
-                </div>
-                <button class="button-follow">Follow</button>
-            </div>
-            <div class="introduce-author">
-                <span>Nhà văn Tô Hoài (1920-2014) là một trong những cây bút văn xuôi tiêu biểu của văn học Việt Nam hiện đại.
-                    Ông là tác giả của hàng trăm cuốn sách thuộc nhiều thể loại: Truyện ngắn, tiểu thuyết, bút ký, tự truyện... Trong số đó nổi tiếng nhất là tác phẩm Dế Mèn phiêu lưu ký viết cho thiếu nhi từ những năm trước Cách mạng.</span>
-            </div>
-        </div>
-        <hr>
-        <div class="similar-books">
-            <h3>Similar books</h3>
-            <div class="list-recommend-books">
-                <div class="recommend-book">
-                    <img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1545314990i/10433999._SX600_.jpg" alt="">
-                    <div class="recommend-book-info">
-                        <h4>Tôi thấy hoa vàng trên cỏ xanh</h4>
-                        <p>Nguyễn Nhật Ánh</p>
-                        <div class="recommend-book-info-rate">
-                            <i class="fa-solid fa-star"></i>
-                            <p>4.42</p>
-                            <div></div>
-                            <p>4321</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="recommend-book">
-                        <img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1545314990i/10433999._SX600_.jpg" alt="">
-                        <div class="recommend-book-info">
-                            <h4>Tôi thấy hoa vàng trên cỏ xanh</h4>
-                            <p>Nguyễn Nhật Ánh</p>
-                            <div class="recommend-book-info-rate">
-                                <i class="fa-solid fa-star"></i>
-                                <p>4.42</p>
-                                <div></div>
-                                <p>4321</p>
-                            </div>
-                        </div>
-                    </div>
-                <div class="recommend-book">
-                        <img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1545314990i/10433999._SX600_.jpg" alt="">
-                        <div class="recommend-book-info">
-                            <h4>Tôi thấy hoa vàng trên cỏ xanh</h4>
-                            <p>Nguyễn Nhật Ánh</p>
-                            <div class="recommend-book-info-rate">
-                                <i class="fa-solid fa-star"></i>
-                                <p>4.42</p>
-                                <div></div>
-                                <p>4321</p>
-                            </div>
-                        </div>
-                    </div>
-                <div class="recommend-book">
-                        <img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1545314990i/10433999._SX600_.jpg" alt="">
-                        <div class="recommend-book-info">
-                            <h4>Tôi thấy hoa vàng trên cỏ xanh</h4>
-                            <p>Nguyễn Nhật Ánh</p>
-                            <div class="recommend-book-info-rate">
-                                <i class="fa-solid fa-star"></i>
-                                <p>4.42</p>
-                                <div></div>
-                                <p>4321</p>
-                            </div>
-                        </div>
-                    </div>
-            </div>
-            <div class="all-similar-books">
-                <p>All similar books</p>
-                <i class="fa-solid fa-angle-right"></i>
-            </div>
-        </div>
-        <hr>
-        <div class="ratings-and-reviews">
-            <h2>Ratings & Reviews</h2>
-            <div class="my-review">
-                <h3>My review</h3>
-                <div class="content-my-review">
-                    <div class="info-my-review">
-                        <img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1691147319i/11273677.jpg" alt="">
-                        <p>Trần Tính</p>
-                        <p>1 reviews</p>
-                    </div>
-                    <div class="rate-my-review">
-                        <div class="star-rate-my-review">
-                            <i class="fa-regular fa-star"></i>
-                            <i class="fa-regular fa-star"></i>
-                            <i class="fa-regular fa-star"></i>
-                            <i class="fa-regular fa-star"></i>
-                            <i class="fa-regular fa-star"></i>
-                        </div>
-                        <div class="button-write-a-review">
-                            <button>Write a Review</button>
-                        </div>
-                    </div>
-                    <div class="time-my-review">
-                        <p>24/02/2024</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <hr>
-        <div class="community-reviews">
-            <h3>Community Reviews</h3>
-            <div class="star-rate-community-reviews">
+    <template>
+        <div class="info-detail">
+            <h1 class="book-name">{{ book.name }}</h1>
+            <p class="author-name">{{ book.author }}</p>
+            <div class="star-rate-book">
                 <i class="fa-regular fa-star"></i>
                 <i class="fa-regular fa-star"></i>
                 <i class="fa-regular fa-star"></i>
                 <i class="fa-regular fa-star"></i>
                 <i class="fa-regular fa-star"></i>
                 <h3>4.27</h3>
-                <div class="ratings-number-community-reviews">
+                <div class="ratings-number">
                     <p>1234 ratings</p>
                     <div></div>
                     <p>123 reviews</p>
                 </div>
             </div>
-            <div class="detail-star-rate-community-reviews">
-                <div class="five-star">
-                    <p>5 stars</p>
-                    <div class="chart-rate-container">
-                        <div class="chart-rate-container-value">
-                            <div class="chart-rate-value"></div>
+            <div class="description">
+            <span>
+                {{ book.description }}
+            </span>
+            </div>
+            <hr>
+            <div class="information">
+                <h3>Information</h3>
+                <div class="information-detail">
+                    <div class="title-information">
+                        <p>Category</p>
+                        <p>Format</p>
+                        <p>Published</p>
+                        <p>Language</p>
+                    </div>
+                    <div class="value-information">
+                        <p>{{ book.category }}</p>
+                        <p>{{ book.page + ' Pages' }}</p>
+                        <p>{{ book.published }}</p>
+                        <p>{{ book.language }}</p>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="about-the-author">
+                <h3>About the author</h3>
+                <div class="info-about-the-author">
+                    <img :src="author.image" alt="">
+                    <div class="name-author">
+                        <p>{{ author.name}}</p>
+                        <div class="book-and-follower">
+                            <p>{{ author.books && author.books.length ? author.books.length :'' }} books</p>
+                            <div></div>
+                            <p>123 followers</p>
                         </div>
                     </div>
-                    <p>39%</p>
+                    <button class="button-follow">Follow</button>
                 </div>
-                <div class="five-star">
+                <div class="introduce-author">
+                    <span>{{ author.biography }}</span>
+                </div>
+            </div>
+            <hr>
+            <div class="similar-books">
+                <h3>Similar books</h3>
+                <div class="list-recommend-books">
+                    <div class="recommend-book">
+                        <img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1545314990i/10433999._SX600_.jpg" alt="">
+                        <div class="recommend-book-info">
+                            <h4>Tôi thấy hoa vàng trên cỏ xanh</h4>
+                            <p>Nguyễn Nhật Ánh</p>
+                            <div class="recommend-book-info-rate">
+                                <i class="fa-solid fa-star"></i>
+                                <p>4.42</p>
+                                <div></div>
+                                <p>4321</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="recommend-book">
+                            <img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1545314990i/10433999._SX600_.jpg" alt="">
+                            <div class="recommend-book-info">
+                                <h4>Tôi thấy hoa vàng trên cỏ xanh</h4>
+                                <p>Nguyễn Nhật Ánh</p>
+                                <div class="recommend-book-info-rate">
+                                    <i class="fa-solid fa-star"></i>
+                                    <p>4.42</p>
+                                    <div></div>
+                                    <p>4321</p>
+                                </div>
+                            </div>
+                        </div>
+                    <div class="recommend-book">
+                            <img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1545314990i/10433999._SX600_.jpg" alt="">
+                            <div class="recommend-book-info">
+                                <h4>Tôi thấy hoa vàng trên cỏ xanh</h4>
+                                <p>Nguyễn Nhật Ánh</p>
+                                <div class="recommend-book-info-rate">
+                                    <i class="fa-solid fa-star"></i>
+                                    <p>4.42</p>
+                                    <div></div>
+                                    <p>4321</p>
+                                </div>
+                            </div>
+                        </div>
+                    <div class="recommend-book">
+                            <img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1545314990i/10433999._SX600_.jpg" alt="">
+                            <div class="recommend-book-info">
+                                <h4>Tôi thấy hoa vàng trên cỏ xanh</h4>
+                                <p>Nguyễn Nhật Ánh</p>
+                                <div class="recommend-book-info-rate">
+                                    <i class="fa-solid fa-star"></i>
+                                    <p>4.42</p>
+                                    <div></div>
+                                    <p>4321</p>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="all-similar-books">
+                    <p>All similar books</p>
+                    <i class="fa-solid fa-angle-right"></i>
+                </div>
+            </div>
+            <hr>
+            <div class="ratings-and-reviews">
+                <h2>Ratings & Reviews</h2>
+                <div class="my-review">
+                    <h3>My review</h3>
+                    <div class="content-my-review">
+                        <div class="info-my-review">
+                            <img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1691147319i/11273677.jpg" alt="">
+                            <p>Trần Tính</p>
+                            <p>1 reviews</p>
+                        </div>
+                        <div class="rate-my-review">
+                            <div class="star-rate-my-review">
+                                <i class="fa-regular fa-star"></i>
+                                <i class="fa-regular fa-star"></i>
+                                <i class="fa-regular fa-star"></i>
+                                <i class="fa-regular fa-star"></i>
+                                <i class="fa-regular fa-star"></i>
+                            </div>
+                            <div class="button-write-a-review">
+                                <button>Write a Review</button>
+                            </div>
+                        </div>
+                        <div class="time-my-review">
+                            <p>24/02/2024</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="community-reviews">
+                <h3>Community Reviews</h3>
+                <div class="star-rate-community-reviews">
+                    <i class="fa-regular fa-star"></i>
+                    <i class="fa-regular fa-star"></i>
+                    <i class="fa-regular fa-star"></i>
+                    <i class="fa-regular fa-star"></i>
+                    <i class="fa-regular fa-star"></i>
+                    <h3>4.27</h3>
+                    <div class="ratings-number-community-reviews">
+                        <p>1234 ratings</p>
+                        <div></div>
+                        <p>123 reviews</p>
+                    </div>
+                </div>
+                <div class="detail-star-rate-community-reviews">
+                    <div class="five-star">
                         <p>5 stars</p>
                         <div class="chart-rate-container">
                             <div class="chart-rate-container-value">
@@ -186,80 +174,44 @@
                         </div>
                         <p>39%</p>
                     </div>
-                <div class="five-star">
-                    <p>5 stars</p>
-                    <div class="chart-rate-container">
-                        <div class="chart-rate-container-value">
-                            <div class="chart-rate-value"></div>
-                        </div>
-                    </div>
-                    <p>39%</p>
-                </div>
-                <div class="five-star">
-                    <p>5 stars</p>
-                    <div class="chart-rate-container">
-                        <div class="chart-rate-container-value">
-                            <div class="chart-rate-value"></div>
-                        </div>
-                    </div>
-                    <p>39%</p>
-                </div>
-                <div class="five-star">
-                    <p>5 stars</p>
-                    <div class="chart-rate-container">
-                        <div class="chart-rate-container-value">
-                            <div class="chart-rate-value"></div>
-                        </div>
-                    </div>
-                    <p>39%</p>
-                </div>
-            </div>
-            <div class="detail-community-reviews">
-                <div class="info-user-community-reviews">
-                    <img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1630482892i/11378463.jpg" alt="">
-                    <h4>Trần Tính</h4>
-                    <div>
-                        <p>123 reviews</p>
-                        <p>741 followers</p>
-                    </div>
-                    <button>Follow</button>
-                </div>
-                <div class="content-user-community-reviews">
-                    <div class="content-user-rate-and-time">
-                        <div class="content-user-rate">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                        </div>
-                        <div class="content-user-time">
-                            <span>25/02/2024</span>
-                        </div>
-                    </div>
-                    <div class="content-user-comment">
-                        <span>Tác phẩm miêu tả cuộc phiêu lưu của một chú Dế Mèn qua thế giới loài vật và loài người. Những vấn đề nóng hổi như là: cái thiện và cái ác, chiến tranh và hòa bình, lí tưởng và lẽ sống được thể hiện một cách nhẹ nhàng, tinh tế mà sâu sắc.
-                            Cậy mình là chàng dế cường tráng, Mèn dương dương tự đắc, cho mình là tay ghê gớm. Trải qua hai bài học đắt giá là cái chết của của dế Choắt và bị bác Xiến Tóc cắt đứt mất hai sợi râu mượt óng mà Mèn mới tỉnh ngộ, hiểu ra thế nào là lòng nhân ái và cái giá phải trả cho sự ngông nghênh của mình. 
-                            Từ đó Mèn quyết chí đi chu du thiên hạ, chí hướng của Mèn càng được củng cố sau khi chú làm được việc có ích đầu tiên trong đời đó là cứu giúp chị Nhà Trò yếu đuối thoát nạn lũ nhện hung ác. Không những thế chú còn được sự ủng hộ hết lòng của mẹ kính yêu và kết giao được với người bạn tri kỉ là Dế Trũi.
-                        </span>
-                    </div>
-                    <div class="content-user-like-comment">
-                        <p>32 like</p>
-                        <div class="like-and-comment">
-                            <div>
-                                <i class="fa-regular fa-heart"></i>
-                                <p>Like</p>
+                    <div class="five-star">
+                            <p>5 stars</p>
+                            <div class="chart-rate-container">
+                                <div class="chart-rate-container-value">
+                                    <div class="chart-rate-value"></div>
+                                </div>
                             </div>
-                            <div>
-                                <i class="fa-regular fa-comment"></i>
-                                <p>Comment</p>
+                            <p>39%</p>
+                        </div>
+                    <div class="five-star">
+                        <p>5 stars</p>
+                        <div class="chart-rate-container">
+                            <div class="chart-rate-container-value">
+                                <div class="chart-rate-value"></div>
                             </div>
                         </div>
+                        <p>39%</p>
                     </div>
-                    <hr>
+                    <div class="five-star">
+                        <p>5 stars</p>
+                        <div class="chart-rate-container">
+                            <div class="chart-rate-container-value">
+                                <div class="chart-rate-value"></div>
+                            </div>
+                        </div>
+                        <p>39%</p>
+                    </div>
+                    <div class="five-star">
+                        <p>5 stars</p>
+                        <div class="chart-rate-container">
+                            <div class="chart-rate-container-value">
+                                <div class="chart-rate-value"></div>
+                            </div>
+                        </div>
+                        <p>39%</p>
+                    </div>
                 </div>
-            </div>
-            <div class="detail-community-reviews">
+                <div class="detail-community-reviews">
                     <div class="info-user-community-reviews">
                         <img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1630482892i/11378463.jpg" alt="">
                         <h4>Trần Tính</h4>
@@ -304,10 +256,75 @@
                         <hr>
                     </div>
                 </div>
+                <div class="detail-community-reviews">
+                        <div class="info-user-community-reviews">
+                            <img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1630482892i/11378463.jpg" alt="">
+                            <h4>Trần Tính</h4>
+                            <div>
+                                <p>123 reviews</p>
+                                <p>741 followers</p>
+                            </div>
+                            <button>Follow</button>
+                        </div>
+                        <div class="content-user-community-reviews">
+                            <div class="content-user-rate-and-time">
+                                <div class="content-user-rate">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                                <div class="content-user-time">
+                                    <span>25/02/2024</span>
+                                </div>
+                            </div>
+                            <div class="content-user-comment">
+                                <span>Tác phẩm miêu tả cuộc phiêu lưu của một chú Dế Mèn qua thế giới loài vật và loài người. Những vấn đề nóng hổi như là: cái thiện và cái ác, chiến tranh và hòa bình, lí tưởng và lẽ sống được thể hiện một cách nhẹ nhàng, tinh tế mà sâu sắc.
+                                    Cậy mình là chàng dế cường tráng, Mèn dương dương tự đắc, cho mình là tay ghê gớm. Trải qua hai bài học đắt giá là cái chết của của dế Choắt và bị bác Xiến Tóc cắt đứt mất hai sợi râu mượt óng mà Mèn mới tỉnh ngộ, hiểu ra thế nào là lòng nhân ái và cái giá phải trả cho sự ngông nghênh của mình. 
+                                    Từ đó Mèn quyết chí đi chu du thiên hạ, chí hướng của Mèn càng được củng cố sau khi chú làm được việc có ích đầu tiên trong đời đó là cứu giúp chị Nhà Trò yếu đuối thoát nạn lũ nhện hung ác. Không những thế chú còn được sự ủng hộ hết lòng của mẹ kính yêu và kết giao được với người bạn tri kỉ là Dế Trũi.
+                                </span>
+                            </div>
+                            <div class="content-user-like-comment">
+                                <p>32 like</p>
+                                <div class="like-and-comment">
+                                    <div>
+                                        <i class="fa-regular fa-heart"></i>
+                                        <p>Like</p>
+                                    </div>
+                                    <div>
+                                        <i class="fa-regular fa-comment"></i>
+                                        <p>Comment</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                        </div>
+                    </div>
+            </div>
         </div>
-    </div>
-</template>
-<script>
+    </template>
+    <script>
+    import BookService from '../services/book.service';
+    export default {
+        props: {
+            id: {type: String, default: ""},
+            author: {type: Object}
+        },
+        data() {
+            return {
+                book: {},
+            }
+        },
+        methods: {
+            async getBook(){
+                this.book = await BookService.getByBookId(this.id);
+            },
+        },
+        async created(){
+           await this.getBook();
+        }
+    }
 </script>
 
 <style scoped>

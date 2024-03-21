@@ -1,21 +1,44 @@
 <template>
     <div class="container-author-detail">
         <div class="image-follow-author-detail">
-            <img class="image-author" src="https://images.gr-assets.com/authors/1305183182p5/4634532.jpg" alt="">
+            <img class="image-author" :src="author.image" alt="">
             <div class="container-button-follow-author">
                 <button class="button-follow-author">Follow Author</button>
             </div>
         </div>
         <div class="info-author">
-            <InfoAuthor />
+            <InfoAuthor :key="author.authorId" :author="author" />
         </div>
     </div>
 </template>
 <script>
-import InfoAuthor from "../components/InfoAuthor.vue"
+import InfoAuthor from "@/components/InfoAuthor.vue";
+import AuthorService from "../services/author.service";
 export default {
     components: {
         InfoAuthor,
+    },
+
+    props: {
+        name: {type: String, default: ""}
+    },
+    data(){
+        return {
+            author: {},
+        }
+    },
+    methods:{
+        async getAuthor(){
+            try {
+                this.author = await AuthorService.getByName(this.name);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    },
+
+    created(){
+        this.getAuthor();
     }
 }
 </script>

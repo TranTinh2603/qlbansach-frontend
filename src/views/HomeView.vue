@@ -2,7 +2,7 @@
     <div class="page">
         <div class="read">
             <div class="currently-reading">
-                <CurrentlyReading />
+                <CurrentlyReading :currentlyReading="currentlyReading" :wantToRead="wantToRead" />
             </div>
             <hr>
             <div class="want-to-read">
@@ -27,12 +27,63 @@
 import CurrentlyReading from "../components/CurrentlyReading.vue";
 import Posts from "../components/Posts.vue";
 import Recommend from "../components/Recommend.vue";
+import UserService from "../services/user.service";
+import MyBookService from "../services/myBook.service";
+import BookService from "../services/book.service";
 export default {
     components: {
         CurrentlyReading,
         Posts,
         Recommend,
-    }
+    },
+    data() {
+        return {
+            user:{},
+            currentlyReading: [],
+            wantToRead: [],
+            read: [],
+            isLoading: false,
+        }
+    },
+    computed:{
+        
+    },
+    methods: {
+        async getUser() {
+            try {
+                this.user = await UserService.get("U001");
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        async getBookByStatus(){
+            const data1 = {
+                userId: "U001",
+                status: "Currently Reading",
+            };
+            const data2 = {
+                userId: "U001",
+                status: "Want To Read",
+            };
+            const data3 = {
+                userId: "U001",
+                status: "Read",
+            };
+            try {
+                const currentlyReadingLocal = await MyBookService.getByStatus(data1);
+                for (const book of currentlyReadingLocal) {
+                    this.currentlyReading.push(await BookService.getByBookId(book.bookId));
+                }
+                this.wantToRead = await MyBookService.getByStatus(data2);
+            } catch (error) {
+                
+            }
+        }
+    },
+    created(){
+        this.getUser();
+        this.getBookByStatus();
+    },
 };
 </script>
 <style scoped>

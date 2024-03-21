@@ -1,42 +1,43 @@
 <script>
 import AppHeader from "@/components/AppHeader.vue";
 import AppFooter from "@/components/AppFooter.vue";
-// import AuthService from '../src/services/AuthService.js';
+import AuthService from '../src/services/AuthService.js';
 export default {
   components: {
     AppHeader,
     AppFooter
   },
-//  data() {
-//     return {
-//       isAuthenticated: AuthService.isAuthenticated,
-//     };
-//   },
-//   watch: {
-//     '$route': 'checkAuthentication',
-//   },
-//   methods: {
-//     checkAuthentication() {
-//       AuthService.checkAuthentication();
-//       this.isAuthenticated = AuthService.isAuthenticated;
+ data() {
+    return {
+      isAuthenticated: AuthService.isAuthenticated,
+    };
+  },
+  watch: {
+    '$route': 'checkAuthentication',
+  },
+  methods: {
+    checkAuthentication() {
+      AuthService.checkAuthentication();
+      this.isAuthenticated = AuthService.isAuthenticated;
 
-//       if (!this.isAuthenticated) {
-//         this.$router.push({ path: '/login' });
-//       }
-//     },
-//   },
-//   mounted() {
-//     this.checkAuthentication();
-//   }
+      if (!this.isAuthenticated) {
+        alert("Bạn chưa đăng nhập. Vui lòng đăng nhập!");
+        this.$router.push({ path: '/login' });
+      }
+    },
+  },
+  mounted() {
+    this.checkAuthentication();
+  }
 };
 </script>
 <template>
   <div id="app">
-    <AppHeader />
+    <AppHeader v-if="isAuthenticated" />
     <div>
       <router-view />
     </div>
-    <AppFooter />
+    <AppFooter v-if="isAuthenticated" />
   </div>
 </template>
 <style>

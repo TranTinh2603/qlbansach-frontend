@@ -1,84 +1,325 @@
 <template>
     <div class="container-my-books">
         <h2>My Books</h2>
-        <hr>
         <div class="container-bookshelves-and-table-books">
             <div class="bookshelves">
                 <h4>Bookshelves</h4>
                 <div class="bookshelves-status-book">
-                    <p>All <span>(7)</span></p>
-                    <p>Read <span>(7)</span></p>
-                    <p>Currently Reading <span>(7)</span></p>
-                    <p>Want to Read <span>(7)</span></p>
+                    <p @click="filterType = 'All'; selectedShelf ='' ">All <span>({{ countStatusBook('all').length }})</span></p>
+                    <p @click="filterType = 'Read'; selectedShelf = ''"> Read <span>({{ countStatusBook('Read').length }})</span></p>
+                    <p @click="filterType = 'Currently Reading'; selectedShelf = ''"> Currently Reading <span>({{ countStatusBook('Currently Reading').length }})</span></p>
+                    <p @click="filterType = 'Want To Read'; selectedShelf = ''">Want to Read <span>({{ countStatusBook('Want To Read').length }})</span></p>
                 </div>
-                <hr>
                 <div class="bookshelves-add-book">
-                    <p>Sách-Việt-Nam <span>(7)</span></p>
-                    <button>Add shelf</button>
+                    <p v-for="(shelf, index) in shelfs" @click="selectedShelf = shelf.name" :key="index">{{ shelf.name }} <span>({{ countBookshelves(shelf.name).length }})</span></p>
+                    <button v-if="addShelf === false" @click="showAddShelf()">Add shelf</button>
+                    <div v-else class="add-shelves">
+                        <h4>Add a shelf</h4>
+                        <form @submit.prevent="handleAddShelf()" class="form-add-shelves">
+                            <input class="input-add-shelves" type="text" v-model="shelfName">
+                            <input class="submit-add-shelves" type="submit" value="Add">
+                            <i  @click="showAddShelf()" class="fa-solid fa-xmark"></i>
+                        </form>
+                    </div>
                 </div>
-                <hr>
+               
             </div>
             <div class="table-books">
                 <table>
-                    <tr style="border-bottom: 1px solid;">
+                    <tr style="border-bottom: 2px solid #ebe8d5; font-size: 14px;">
                         <th style="width: 60px;">Image</th>
-                        <th  style="width: 90px;">Title</th>
-                        <th  style="width: 60px;">Author</th>
+                        <th  style="width: 100px;">Title</th>
+                        <th  style="width: 70px;">Author</th>
                         <th  style="width: 30px;">Avg Rating</th>
-                        <th  style="width: 90px;">Rating</th>
-                        <th  style="width: 60px;">Shelves</th>
-                        <th>Review</th>
+                        <th  style="width: 90px;">My Rating</th>
+                        <th  style="width: 100px;">Shelves</th>
+                        <th> My Review</th>
                         <th  style="width: 30px;"></th>
                     </tr>
-                    <tr style="border-bottom: 1px solid;">
-                        <td><img src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1630482892l/11378463._SY75_.jpg" alt=""></td>
-                        <td><p>Dế Mèn Phiêu Lưu Kí</p></td>
-                        <td>Tô Hoài</td>
-                        <td>4.27</td>
-                        <td>
-                            <div style="font-size: 12px;">
-                                <i class="fa-regular fa-star"></i>
-                                <i class="fa-regular fa-star"></i>
-                                <i class="fa-regular fa-star"></i>
-                                <i class="fa-regular fa-star"></i>
-                                <i class="fa-regular fa-star"></i>
-                            </div>
-                        </td>
-                        <td><span>want-to-read</span></td>
-                        <td>
-                            <div>Write a review</div>
-                        </td>
-                        <td><i class="fa-solid fa-xmark"></i></td>
-                    </tr>
-                    <tr style="border-bottom: 1px solid;">
-                            <td><img src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1630482892l/11378463._SY75_.jpg" alt=""></td>
-                            <td><p>Dế Mèn Phiêu Lưu Kí</p></td>
-                            <td>Tô Hoài</td>
-                            <td>4.27</td>
+                    <tr v-for="(book, index) in  paginatedBooks" :key="index" style="border-bottom: 1px solid #eee; font-size: 14px; color: #00635d; vertical-align: top;" >
+                            <td><img @click="goToDetailBook(book.bookId)" style="height: 100px; width: 60px; cursor: pointer;" :src="book.image" alt=""></td>
+                            <td><p @click="goToDetailBook(book.bookId)">{{ book.name }}</p></td>
+                            <td><p @click="goToDetailAuthor(book.author)">{{ book.author }}</p></td>
+                            <td>{{ avgRating(book.bookId) }}</td>
                             <td>
-                                <div style="font-size: 12px;">
-                                    <i class="fa-regular fa-star"></i>
-                                    <i class="fa-regular fa-star"></i>
-                                    <i class="fa-regular fa-star"></i>
-                                    <i class="fa-regular fa-star"></i>
-                                    <i class="fa-regular fa-star"></i>
+                                <div v-if="getReviewByUserIdAndBookId(user.userId, book.bookId)" style="font-size: 12px;">
+                                    <i v-for="star in getReviewByUserIdAndBookId(user.userId, book.bookId).rating" class="fa-solid fa-star" style="color: gold;"></i>
+                                    <i v-for="emptyStar in 5 - getReviewByUserIdAndBookId(user.userId, book.bookId).rating" class="fa-regular fa-star"></i>
+                                </div>
+                                <div v-else style="font-size: 12px;">
+                                    <i v-for="star in 5" 
+                                        :key="star" 
+                                        :class="['fa', 'fa-star', { 'fa-solid': star <= book.currentRating, 'fa-regular': star > book.currentRating }]"
+                                        @mouseover=" hoverRating(book,star)"
+                                        @mouseleave="resetRating(book)"
+                                        @click="setRating(star,user.userId, book)"
+                                    ></i>
                                 </div>
                             </td>
-                            <td><span>want-to-read</span></td>
+                            <td><p>{{ getMyBookByBookId(book.bookId).status }}{{ getMyBookByBookId(book.bookId) && getMyBookByBookId(book.bookId).bookshelves ? ', '+getMyBookByBookId(book.bookId).bookshelves: '' }}</p>
+                                <div class="edit-icon">
+                                    <p @click="toggleDropdownMenu(book)">[Edit]</p>
+                                    <div v-if="book.showDropdownMenu" class="dropdown-menu">
+                                        <p>Edit Book</p>
+                                        <p>Delete Book</p>
+                                    </div>
+                                </div>
+                                
+                            </td>
                             <td>
-                                <div>Write a review</div>
+                                <div>{{ getReviewByUserIdAndBookId(user.userId, book.bookId) ? getReviewByUserIdAndBookId(user.userId, book.bookId).review : '' }}</div>
                             </td>
                             <td><i class="fa-solid fa-xmark"></i></td>
-                        </tr> 
+                        </tr>
                 </table>
+                <div class="pagination">
+                    <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
+                    <span>{{ currentPage }} of {{ totalPages }}</span>
+                    <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
+                </div>
             </div>
         </div>
     </div>
 </template>
 <script>
+import AuthService from "../services/AuthService";
+import UserService from "../services/user.service";
+import MyBookService from "../services/myBook.service";
+import BookService from "../services/book.service";
+import ReviewService from "../services/review.service";
+import BookshelvesService from "../services/bookshelves.service";
+export default {
+    data() {
+        return{
+            user: {},
+            myBook: [],
+            Book: [],
+            reviews: [],
+            filterType: 'All',
+            rating: 0,
+            currentPage: 1,
+            itemsPerPage: 5,
+            addShelf: false,
+            shelfName: '',
+            shelfs:[],
+            selectedShelf: '',
+            
+        } 
+    },
+    computed: {
+        totalPages() {
+            return Math.ceil(this.filteredBooks().length / this.itemsPerPage);
+        },
+        paginatedBooks() {
+            const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+            const endIndex = startIndex + this.itemsPerPage;
+            return this.filteredBooks().slice(startIndex, endIndex);
+        },
+    },
+    methods: {
+        async getUser(){
+            AuthService.checkAuthentication();
+            const email = AuthService.user.Email;
+            this.user = await UserService.getUserByEmail(email);
+            console.log(this.user);
+            this.getMyBook(this.user.userId)
+            this.getBookshelvesByUserId(this.user.userId);
+        },
+        async getMyBook(userId) {
+            try {
+                this.myBook = await MyBookService.getByUserId(userId);
+                for (const book of this.myBook) {
+                    await this.getBook(book.bookId);
+                    await this.getReview(book.bookId);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async getBook(id) {
+            try {
+                const book = await BookService.getByBookId(id);
+                book["currentRating"] = 0;
+                book["showDropdownMenu"]= false,
+                this.Book.push(book);
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        async getReview(id) {
+            try {
+                const reviews = await ReviewService.getByBookId(id);
+                this.reviews.push(...reviews);
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        async getBookshelvesByUserId(userId){
+            this.shelfs = await BookshelvesService.getByUserId(userId);
+            console.log(this.shelfs);
+        },
+        getReviewByUserIdAndBookId(userId, bookId) {
+            return this.reviews.find(review => (review.bookId === bookId && review.userId === userId));
+        },
+        getMyBookByBookId(id) {
+            return this.myBook.find(book => book.bookId === id);
+        },
+        avgRating(id) {
+            const relevantReviews = this.reviews.filter(review => review.bookId === id);
+            if (relevantReviews.length === 0) return 0;
+            const totalRating = relevantReviews.reduce((acc, curr) => acc + curr.rating, 0);
+            return totalRating / relevantReviews.length;
+        },
+        countStatusBook(status){
+            if (status === 'all') {
+                return this.myBook;
+            } else {
+                return this.myBook.filter(book => book.status === status)
+            }
+        },
+        countBookshelves(bookshelvesName) {
+            return this.myBook.filter(book => book.bookshelves === bookshelvesName)
+        },
+        filteredBooks() {
+            if(this.selectedShelf === ''){
+                if (this.filterType === 'All') {
+                    return this.Book;
+                } else if (this.filterType === 'Want To Read') {
+                    const booksWantToRead = this.myBook.filter(book => book.status === 'Want To Read');
+                    return this.Book.filter(book => booksWantToRead.some(item => item.bookId === book.bookId));
+                } else if (this.filterType === 'Currently Reading') {
+                    const booksCurrentlyReading = this.myBook.filter(book => book.status === 'Currently Reading');
+                    return this.Book.filter(book => booksCurrentlyReading.some(item => item.bookId === book.bookId));
+                } else if (this.filterType === 'Read') {
+                    const booksRead = this.myBook.filter(book => book.status === 'Read');
+                    return this.Book.filter(book => booksRead.some(item => item.bookId === book.bookId));
+                } 
+            } else {
+                const bookshelves = this.myBook.filter(book => book.bookshelves === this.selectedShelf);
+                return this.Book.filter(book => bookshelves.some(item => item.bookId === book.bookId));
+            }
+        },
+        hoverRating(book,star) {
+            book.currentRating = star;
+        },
+        resetRating(book) {
+            book.currentRating = this.rating; 
+        },
+        async setRating(rating, userId, book) {
+            book.currentRating = rating;
+            const data = {
+                bookId: book.bookId,
+                userId: userId,
+                rating: book.currentRating,
+                review: "",
+                createdAt: new Date,
+            }
+            const message = await ReviewService.create(data);
+            alert(message.message);
+            location.reload();
+        },
+         prevPage() {
+            if (this.currentPage > 1) {
+                this.currentPage--;
+            }
+        },
+        nextPage() {
+            if (this.currentPage < this.totalPages) {
+                this.currentPage++;
+            }
+        },
+        showAddShelf(){
+            this.addShelf = !this.addShelf;
+        },
+        async handleAddShelf(){
+            console.log(this.user.userId);
+            console.log(this.shelfName);
+            const currentTime = new Date().getTime().toString();
+            const randomString = Math.random().toString(36).substring(2, 8);
+            const randomId = currentTime + randomString;
+            const data = {
+                userId: this.user.userId,
+                name: this.shelfName,
+                bookshelvesId: randomId
+            }
+            const addShelf = await BookshelvesService.create(data);
+            console.log(addShelf);
+        },
+        goToDetailBook(bookId){
+            this.$router.push({name: "book.detail", params:{id: bookId}})
+        },
+        goToDetailAuthor(author){
+            this.$router.push({ name: "author.detail", params: { name: author } })
+        },
+        toggleDropdownMenu(book) {
+            book.showDropdownMenu = !book.showDropdownMenu;
+        },
+
+    },
+    mounted() {
+        this.getUser();
+    }
+
+}
 </script>
 <style scoped>
-    table {
+.dropdown-menu {
+    font-size: 14px;
+    position: absolute;
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 8px 0;
+    z-index: 100;
+    width: 120px; /* Adjust width as needed */
+}
+
+.dropdown-menu p {
+    color: #333333;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.dropdown-menu p:hover {
+    background-color: #f2f2f2;
+}
+
+.edit-icon {
+    position: relative;
+    font-size: 12px;
+    display: block;
+    margin-top: 5px;
+    cursor: pointer;
+}
+.edit-icon > p:hover{
+    text-decoration: underline;
+}
+.pagination {
+    float: right;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.pagination button {
+    padding: 5px 10px;
+    margin: 0 5px;
+    cursor: pointer;
+    font-size: 11px;
+    background-color: #F4F1EA;
+    border-radius: 3px;
+    border: 1px solid #D6D0C4;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+    .fa-star.fa-solid {
+    color: gold;
+    }
+        table {
         border-collapse: collapse;
         width: 100%;
     }
@@ -91,8 +332,13 @@
     .container-my-books{
         margin: 0 100px;
     }
+    td > p:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
     .container-my-books > h2 {
-        margin: 10px 0;
+        padding: 10px 0;
+        border-bottom: 1px solid #ebe8d5;
     }
     .container-bookshelves-and-table-books{
         margin: 20px 0;
@@ -102,15 +348,25 @@
     .bookshelves{
         width: 200px;
         height: 1000px;
-        background-color: aqua;
     }
     .bookshelves-status-book{
-        margin: 10px 0;
+        padding: 10px 0;
+        border-bottom: 1px solid #ebe8d5;
     }
+    .bookshelves-add-book p, .bookshelves-status-book p {
+        cursor: pointer;
+        color: #00635d;
+        font-size: 14px;
+    } 
+    .bookshelves-add-book p:hover, .bookshelves-status-book p:hover {
+        text-decoration: underline;
+    } 
     .bookshelves-add-book{
-        margin: 10px 0;
+        padding: 10px 0;
+        border-bottom: 1px solid #ebe8d5;
     }
     .bookshelves-add-book > button{
+        cursor: pointer;
         font-size: 11px;
         margin-top: 10px;
         background-color: #F4F1EA;
@@ -118,9 +374,55 @@
         border-radius: 3px;
         border: 1px solid #D6D0C4;
     }
+    .bookshelves-add-book > button:hover{
+        color: #333333;
+        background-color: #ede6d6;
+        text-decoration: none;
+    }
+    .add-shelves{
+        margin-top: 10px;
+    }
+    .input-add-shelves{
+        width: 120px;
+        margin-right: 5px;
+        background: #FFFFFF;
+        border-radius: 3px;
+        border: #DCD6CC 1px solid;
+        color: #333333;
+        padding: 5px;
+        height: 20px;
+    }
+    .form-add-shelves{
+        margin-top: 5px;
+        display: flex;
+        align-items: center;
+    }
+    .input-add-shelves:focus{
+        box-shadow: 0 0 4px rgba(185,173,153,0.5);
+        border-color: #B9AD99;
+        outline: 0px;
+    }
+    .submit-add-shelves{
+        margin-right: 15px;
+        border-radius: 3px;
+        border: 1px solid #D6D0C4;
+        text-decoration: none;
+        color: #333333;
+        background-color: #F4F1EA;
+        font-size: 11px;
+        padding: 3px 12px;
+        cursor: pointer;
+    }
+    .submit-add-shelves:hover{
+        color: #333333;
+        background-color: #ede6d6;
+        text-decoration: none;
+    }
+    .form-add-shelves > i {
+        cursor: pointer;
+    }
     .table-books{
         width: 850px;
         height: 1000px;
-        background-color: aquamarine;
     }
 </style>

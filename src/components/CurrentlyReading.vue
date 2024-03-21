@@ -1,45 +1,15 @@
 <template>
     <div class="container">
         <h4>CURRENTLY READING</h4>
-        <div class="content">
-            <img src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1545314990i/10433999._SY180_.jpg" alt="">
+        <div class="content" v-for="book in currentlyReading" :key="book.bookId">
+            <img :src="book.image" :alt="book.name">
             <div class="info">
-                <router-link class="name-info" to="/book/detail/1">
-                    Tôi thấy hoa vàng trên cỏ xanh 
+                <router-link class="name-info" :to="{name: 'book.detail', params: {id: book.bookId}}">
+                    {{ book.name }}
                 </router-link>
                 <div class="author-info">
-                    <span >by </span>
-                    <router-link class="author-name" to="/author/detail/1">Nguyễn Nhật Ánh</router-link>
-                </div>
-                <button class="update-progress">
-                    Update progress
-                </button>
-            </div>
-        </div>
-        <div class="content">
-            <img src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1691147319i/11273677._SY180_.jpg" alt="">
-            <div class="info">
-                <router-link class="name-info" to="/test">
-                    Mắt biếc 
-                </router-link>
-                <div class="author-info">
-                    <span >by </span>
-                    <router-link class="author-name" to="/test">Nguyễn Nhật Ánh</router-link>
-                </div>
-                <button class="update-progress">
-                    Update progress
-                </button>
-            </div>
-        </div>
-        <div class="content">
-            <img src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1630546924i/23276781._SY180_.jpg" alt="">
-            <div class="info">
-                <router-link class="name-info" to="/test">
-                    Cà Phê Cùng Tony
-                </router-link>
-                <div class="author-info">
-                    <span >by </span>
-                    <router-link class="author-name" to="/test">Tony Buổi Sáng</router-link>
+                    <span>by </span>
+                    <router-link class="author-name" :to="{name: 'author.detail', params: {name: book.author}}">{{ book.author }}</router-link>
                 </div>
                 <button class="update-progress">
                     Update progress
@@ -53,8 +23,27 @@
         </div>
     </div>
 </template>
+
 <script>
+export default {
+    props: {
+        currentlyReading: { type: Array, default: [] },
+        wantToRead: { type: Array, default:[]}
+    },
+    data(){
+        return {test: this.wantToRead}
+    },
+    methods: {
+    //    test(){
+    //     const test = this.wantToRead;
+    //     console.log("teets",test);
+    //    }
+    },
+    mounted(){
+    }
+}
 </script>
+
 <style scoped>
 
 .content{
