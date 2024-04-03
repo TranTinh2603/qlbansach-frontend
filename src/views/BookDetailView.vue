@@ -27,9 +27,9 @@
                         <span class="close" @click="closeModal">&times;</span>
                     </div>
                     <div class="body-modal-content">
-                        <button @click="setStatusBook('Want To Read')" class="button-body-modal-content"><i v-if="myBook.status === 'Want To Read'" class="fa-solid fa-check"></i>Want To Read</button>
-                        <button @click="setStatusBook('Currently Reading')" class="button-body-modal-content"><i v-if="myBook.status === 'Currently Reading'" class="fa-solid fa-check"></i>Currently Reading</button>
-                        <button @click="setStatusBook('Read')" class="button-body-modal-content"><i v-if="myBook.status === 'Read'" class="fa-solid fa-check"></i>Read</button>
+                        <button @click="setStatusBook(user.userId, 'Want To Read')" class="button-body-modal-content"><i v-if="myBook.status === 'Want To Read'" class="fa-solid fa-check"></i>Want To Read</button>
+                        <button @click="setStatusBook(user.userId, 'Currently Reading')" class="button-body-modal-content"><i v-if="myBook.status === 'Currently Reading'" class="fa-solid fa-check"></i>Currently Reading</button>
+                        <button @click="setStatusBook(user.userId, 'Read')" class="button-body-modal-content"><i v-if="myBook.status === 'Read'" class="fa-solid fa-check"></i>Read</button>
                     </div>
                 </div>
             </div>
@@ -40,14 +40,14 @@
                         :class="['fa', 'fa-star', { 'fa-solid': star <= currentRating, 'fa-regular': star > currentRating }]"
                         @mouseover="hoverRating(star)"
                         @mouseleave="resetRating()"
-                        @click="setRating(star)"
+                        @click="setRating(user.userId, star)"
                     ></i>
                 </div>
                     <p>Rate this book</p>
                 </div>
         </div>
         <div class="info-detail-book">
-            <InfoDetailBook :id="this.id" :author="author"/>
+            <InfoDetailBook :id="this.id" />
         </div>
     </div>
 </template>
@@ -57,6 +57,9 @@ import BookService from "../services/book.service";
 import AuthorService from "../services/author.service";
 import ReviewService from "../services/review.service";
 import MyBookService from "../services/myBook.service";
+import AuthService from "../services/AuthService";
+import UserService from "../services/user.service";
+import PostService from "../services/post.service";
 export default {
     components: {
         InfoDetailBook,
@@ -66,6 +69,7 @@ export default {
     },
     data(){
         return {
+            user: {},
             book: {},
             myBook: {},
             author: {},
@@ -76,18 +80,36 @@ export default {
         }
     },
     methods: {
-        async getMyBookByUserIdAndBookId(){
-            this.myBook = await MyBookService.getByUserIdAndBookId('U001',this.id)
-            console.log(this.myBook);
+        async getUser(){
+            AuthService.checkAuthentication();
+            const email = AuthService.user.Email;
+            this.user = await UserService.getUserByEmail(email)
+            this.getMyBookByUserIdAndBookId(this.user.userId);
+            this.getReview(this.user.userId);
         },
-        async setStatusBook(status){
+        async getMyBookByUserIdAndBookId(userId){
+            this.myBook = await MyBookService.getByUserIdAndBookId(userId,this.id)
+        },
+        async setStatusBook(userId, status){
             const data = {
-                userId: 'U001',
+                userId: userId,
                 bookId: this.id,
                 status: status,
                 bookshelves: ''
             }
+            const date = new Date();
+            const timestamp = date.getTime();
+            const postData = {
+                userId: userId,
+                bookId: this.id,
+                content: status,
+                createdAt: timestamp,
+                likes: [],
+                comments:[]
+            }
             const updateStatusBook = await MyBookService.update(data.userId, data.bookId, data);
+            const createPost = await PostService.create(postData);
+            console.log(createPost);
             alert(updateStatusBook.message);
             location.reload();
         },
@@ -99,8 +121,8 @@ export default {
         async getAuthorByName(name){
             this.author = await AuthorService.getByName(name);
         },
-        async getReview(){
-            this.review = await ReviewService.getByUserIdAndBookId("U001", this.id);
+        async getReview(userId){
+            this.review = await ReviewService.getByUserIdAndBookId(userId, this.id);
         },
         hoverRating(rating) {
             this.currentRating = rating;
@@ -108,13 +130,13 @@ export default {
         resetRating() {
             this.currentRating = 0;
         },
-        async setRating(rating) {
+        async setRating(userId, rating) {
             this.currentRating = rating;
             const data = {
                 bookId: this.id,
-                userId: "U001",
+                userId: userId,
                 rating: this.currentRating,
-                review:"",
+                review: "",
                 createdAt: new Date,
             }
             const message = await ReviewService.create(data);
@@ -130,9 +152,8 @@ export default {
 
     },
     created(){
+        this.getUser();
       this.getBook();
-      this.getReview();
-      this.getMyBookByUserIdAndBookId();
     }
 
 }

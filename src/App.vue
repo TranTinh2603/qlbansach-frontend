@@ -37,7 +37,7 @@ export default {
     <div>
       <router-view />
     </div>
-    <AppFooter v-if="isAuthenticated" />
+    <!-- <AppFooter v-if="isAuthenticated" /> -->
   </div>
 </template>
 <style>

@@ -18,7 +18,7 @@
                         <form @submit.prevent="handleAddShelf()" class="form-add-shelves">
                             <input class="input-add-shelves" type="text" v-model="shelfName">
                             <input class="submit-add-shelves" type="submit" value="Add">
-                            <i  @click="showAddShelf()" class="fa-solid fa-xmark"></i>
+                            <i @click="showAddShelf()" class="fa-solid fa-xmark"></i>
                         </form>
                     </div>
                 </div>
@@ -60,14 +60,24 @@
                                 <div class="edit-icon">
                                     <p @click="toggleDropdownMenu(book)">[Edit]</p>
                                     <div v-if="book.showDropdownMenu" class="dropdown-menu">
-                                        <p>Edit Book</p>
-                                        <p>Delete Book</p>
+                                        <p @click="handleChangeStatusBook(user.userId, book.bookId,'Read')"><i v-if="getMyBookByBookId(book.bookId).status === 'Read'" class="fa-solid fa-check"></i> Read</p>
+                                        <p  @click="handleChangeStatusBook(user.userId, book.bookId, 'Currently Reading')"><i v-if="getMyBookByBookId(book.bookId).status === 'Currently Reading'" class="fa-solid fa-check"></i> Currently Reading</p>
+                                        <p  @click="handleChangeStatusBook(user.userId, book.bookId, 'Want To Read')"><i v-if="getMyBookByBookId(book.bookId).status === 'Want To Read'" class="fa-solid fa-check"></i> Want To Read</p>
+                                        <h4>Shelf</h4>
+                                        <p v-for="(shelf, index) in shelfs " @click="handleChangeBookshelves(user.userId, book.bookId, shelf.name)"><i v-if="getMyBookByBookId(book.bookId).bookshelves === shelf.name" class="fa-solid fa-check"></i> {{ shelf.name }}</p>
                                     </div>
                                 </div>
                                 
                             </td>
                             <td>
-                                <div>{{ getReviewByUserIdAndBookId(user.userId, book.bookId) ? getReviewByUserIdAndBookId(user.userId, book.bookId).review : '' }}</div>
+                                <div v-if="showEditReview === false">
+                                    <p>{{ getReviewByUserIdAndBookId(user.userId, book.bookId) ? getReviewByUserIdAndBookId(user.userId, book.bookId).review : '' }}</p>
+                                    <i style="font-size: 12px;" class="fa-solid fa-pen"></i>
+                                </div>
+                                <!-- <form @submit.prevent="handleEditReview(book.bookId)">
+                                    <textarea :name=book.bookId cols="30" rows="5" v-model="getReviewByUserIdAndBookId(user.userId, book.bookId).review"></textarea>
+                                    <input type="submit">
+                                </form> -->
                             </td>
                             <td><i class="fa-solid fa-xmark"></i></td>
                         </tr>
@@ -103,6 +113,9 @@ export default {
             shelfName: '',
             shelfs:[],
             selectedShelf: '',
+            selectedStatus: '',
+            showEditReview: false,
+            contentReview: '',
             
         } 
     },
@@ -121,7 +134,6 @@ export default {
             AuthService.checkAuthentication();
             const email = AuthService.user.Email;
             this.user = await UserService.getUserByEmail(email);
-            console.log(this.user);
             this.getMyBook(this.user.userId)
             this.getBookshelvesByUserId(this.user.userId);
         },
@@ -156,7 +168,6 @@ export default {
         },
         async getBookshelvesByUserId(userId){
             this.shelfs = await BookshelvesService.getByUserId(userId);
-            console.log(this.shelfs);
         },
         getReviewByUserIdAndBookId(userId, bookId) {
             return this.reviews.find(review => (review.bookId === bookId && review.userId === userId));
@@ -254,7 +265,32 @@ export default {
         toggleDropdownMenu(book) {
             book.showDropdownMenu = !book.showDropdownMenu;
         },
-
+        async handleChangeStatusBook(userId, bookId, status){
+            const myBook = this.getMyBookByBookId(bookId)
+            const data = {
+                userId: userId,
+                bookId: bookId,
+                bookshelves: myBook.bookshelves,
+                status: status
+            }
+            const update = await MyBookService.update(userId, bookId, data)
+            alert(update.message);
+            window.location.reload();
+            console.log('data:', update);
+        },
+        async handleChangeBookshelves(userId, bookId, bookshelves) {
+            const myBook = this.getMyBookByBookId(bookId)
+            const data = {
+                userId: userId,
+                bookId: bookId,
+                bookshelves: bookshelves,
+                status: myBook.status
+            }
+            const update = await MyBookService.update(userId, bookId, data)
+            alert(update.message);
+            window.location.reload();
+            console.log('data:', update);
+        },
     },
     mounted() {
         this.getUser();
@@ -272,7 +308,7 @@ export default {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 8px 0;
     z-index: 100;
-    width: 120px; /* Adjust width as needed */
+    width: 150px; /* Adjust width as needed */
 }
 
 .dropdown-menu p {

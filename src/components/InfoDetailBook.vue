@@ -1,18 +1,14 @@
     <template>
         <div class="info-detail">
             <h1 class="book-name">{{ book.name }}</h1>
-            <p class="author-name">{{ book.author }}</p>
+            <router-link to="/" class="author-name">{{ book.author }}</router-link>
             <div class="star-rate-book">
-                <i class="fa-regular fa-star"></i>
-                <i class="fa-regular fa-star"></i>
-                <i class="fa-regular fa-star"></i>
-                <i class="fa-regular fa-star"></i>
-                <i class="fa-regular fa-star"></i>
-                <h3>4.27</h3>
+                <i v-for="starIndex in 5" :key="starIndex" :class="starClass(starIndex, reviews)" style="color: #e87400"></i>
+                <h3>{{ avgRating(reviews) }}</h3>
                 <div class="ratings-number">
-                    <p>1234 ratings</p>
+                    <p>{{ reviews.length }} ratings</p>
                     <div></div>
-                    <p>123 reviews</p>
+                    <p>{{ countReview(reviews) }} reviews</p>
                 </div>
             </div>
             <div class="description">
@@ -61,11 +57,11 @@
             <div class="similar-books">
                 <h3>Similar books</h3>
                 <div class="list-recommend-books">
-                    <div class="recommend-book">
-                        <img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1545314990i/10433999._SX600_.jpg" alt="">
+                    <div v-for="(similarBook, index) in paginatedSimilarBooks" :key="index" class="recommend-book">
+                        <img :src="similarBook.image" alt="">
                         <div class="recommend-book-info">
-                            <h4>Tôi thấy hoa vàng trên cỏ xanh</h4>
-                            <p>Nguyễn Nhật Ánh</p>
+                            <h4>{{ similarBook.name }}</h4>
+                            <p>{{ similarBook.author }}</p>
                             <div class="recommend-book-info-rate">
                                 <i class="fa-solid fa-star"></i>
                                 <p>4.42</p>
@@ -74,49 +70,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="recommend-book">
-                            <img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1545314990i/10433999._SX600_.jpg" alt="">
-                            <div class="recommend-book-info">
-                                <h4>Tôi thấy hoa vàng trên cỏ xanh</h4>
-                                <p>Nguyễn Nhật Ánh</p>
-                                <div class="recommend-book-info-rate">
-                                    <i class="fa-solid fa-star"></i>
-                                    <p>4.42</p>
-                                    <div></div>
-                                    <p>4321</p>
-                                </div>
-                            </div>
-                        </div>
-                    <div class="recommend-book">
-                            <img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1545314990i/10433999._SX600_.jpg" alt="">
-                            <div class="recommend-book-info">
-                                <h4>Tôi thấy hoa vàng trên cỏ xanh</h4>
-                                <p>Nguyễn Nhật Ánh</p>
-                                <div class="recommend-book-info-rate">
-                                    <i class="fa-solid fa-star"></i>
-                                    <p>4.42</p>
-                                    <div></div>
-                                    <p>4321</p>
-                                </div>
-                            </div>
-                        </div>
-                    <div class="recommend-book">
-                            <img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1545314990i/10433999._SX600_.jpg" alt="">
-                            <div class="recommend-book-info">
-                                <h4>Tôi thấy hoa vàng trên cỏ xanh</h4>
-                                <p>Nguyễn Nhật Ánh</p>
-                                <div class="recommend-book-info-rate">
-                                    <i class="fa-solid fa-star"></i>
-                                    <p>4.42</p>
-                                    <div></div>
-                                    <p>4321</p>
-                                </div>
-                            </div>
-                        </div>
+                </div>
+                <div class="pagination">
+                    <i v-if="currentPage !== 1" @click="prevPage" class="fa-solid fa-angle-left"></i>
+                    <i v-if="currentPage !== totalPages" @click="nextPage" class="fa-solid fa-angle-right"></i>
                 </div>
                 <div class="all-similar-books">
                     <p>All similar books</p>
-                    <i class="fa-solid fa-angle-right"></i>
                 </div>
             </div>
             <hr>
@@ -132,11 +92,8 @@
                         </div>
                         <div class="rate-my-review">
                             <div class="star-rate-my-review">
-                                <i class="fa-regular fa-star"></i>
-                                <i class="fa-regular fa-star"></i>
-                                <i class="fa-regular fa-star"></i>
-                                <i class="fa-regular fa-star"></i>
-                                <i class="fa-regular fa-star"></i>
+                                <i v-for="start in getMyReview(reviews, user.userId) ? getMyReview(reviews, user.userId).rating : 0" class="fa-solid fa-star"></i>
+                                <i v-for="emtyStart in 5 - (getMyReview(reviews, user.userId) ? getMyReview(reviews, user.userId).rating : 0)" class="fa-regular fa-star"></i>
                             </div>
                             <div class="button-write-a-review">
                                 <button>Write a Review</button>
@@ -280,7 +237,8 @@
                                 </div>
                             </div>
                             <div class="content-user-comment">
-                                <span>Tác phẩm miêu tả cuộc phiêu lưu của một chú Dế Mèn qua thế giới loài vật và loài người. Những vấn đề nóng hổi như là: cái thiện và cái ác, chiến tranh và hòa bình, lí tưởng và lẽ sống được thể hiện một cách nhẹ nhàng, tinh tế mà sâu sắc.
+                                <span>
+                                    Tác phẩm miêu tả cuộc phiêu lưu của một chú Dế Mèn qua thế giới loài vật và loài người. Những vấn đề nóng hổi như là: cái thiện và cái ác, chiến tranh và hòa bình, lí tưởng và lẽ sống được thể hiện một cách nhẹ nhàng, tinh tế mà sâu sắc.
                                     Cậy mình là chàng dế cường tráng, Mèn dương dương tự đắc, cho mình là tay ghê gớm. Trải qua hai bài học đắt giá là cái chết của của dế Choắt và bị bác Xiến Tóc cắt đứt mất hai sợi râu mượt óng mà Mèn mới tỉnh ngộ, hiểu ra thế nào là lòng nhân ái và cái giá phải trả cho sự ngông nghênh của mình. 
                                     Từ đó Mèn quyết chí đi chu du thiên hạ, chí hướng của Mèn càng được củng cố sau khi chú làm được việc có ích đầu tiên trong đời đó là cứu giúp chị Nhà Trò yếu đuối thoát nạn lũ nhện hung ác. Không những thế chú còn được sự ủng hộ hết lòng của mẹ kính yêu và kết giao được với người bạn tri kỉ là Dế Trũi.
                                 </span>
@@ -306,23 +264,122 @@
     </template>
     <script>
     import BookService from '../services/book.service';
+    import AuthService from '../services/AuthService';
+    import AuthorService from '../services/author.service';
+    import UserService from '../services/user.service';
+    import ReviewService from '../services/review.service';
+    import SimilarService from '../services/similar.service'
     export default {
         props: {
             id: {type: String, default: ""},
-            author: {type: Object}
         },
         data() {
             return {
                 book: {},
+                author: {},
+                user: {},
+
+                reviews: [],
+                similarBooks: [],
+                currentPage: 1,
+                itemsPerPage: 4
+                
+            }
+        },
+        computed: {
+             paginatedSimilarBooks() {
+                const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+                const endIndex = startIndex + this.itemsPerPage;
+                return this.similarBooks.slice(startIndex, endIndex);
+            },
+            totalPages() {
+                return Math.ceil(this.similarBooks.length / this.itemsPerPage);
             }
         },
         methods: {
+            async getUser() {
+                AuthService.checkAuthentication();
+                const email = AuthService.user.Email;
+                this.user = await UserService.getUserByEmail(email);
+            },
+            async getSimilarsBookId() {
+                const similars = await SimilarService.get(this.id);
+                this.getSimilarsBook(similars.similars)
+            },
+            async getSimilarsBook(similars){
+                for (const similar of similars){
+                    const similarBook = await BookService.getByBookId(similar)
+                    this.similarBooks.push(similarBook)
+                }   
+            },
             async getBook(){
                 this.book = await BookService.getByBookId(this.id);
+                this.getAuthorByName(this.book.author);
             },
+            async getAuthorByName(name){
+                this.author = await AuthorService.getByName(name);
+            },
+            async getReviewByBookId(){
+                this.reviews = await ReviewService.getByBookId(this.id);
+                console.log(this.reviews);
+            },
+            getMyReview(reviews, userId) {
+                const myReview = reviews.find(review => review.userId === userId)
+                return myReview
+            },
+            countReview(reviews){
+                let count = 0;
+                for (const review of reviews) {
+                    if (review.review !== ''){
+                        count++;
+                    }
+                }
+                return count;
+            },
+            avgRating(reviews){
+                let avgRating = 0.0;
+                let sum = 0;
+                let count = 0;
+
+                for (const review of reviews) {
+                    sum += review.rating;
+                    count++;
+                }
+
+                if (count !== 0) {
+                    avgRating = sum / count;
+                    avgRating = Math.round(avgRating * 100) / 100;
+                }
+                return avgRating;
+            },
+            starClass(starIndex, reviews) {
+                const rating = this.avgRating(reviews);
+                if (rating >= starIndex) {
+                    return 'fa-solid fa-star';
+                } else if (rating > starIndex - 1 && rating < starIndex) {
+                    return 'fa-solid fa-star-half-alt';
+                } else {
+                    return 'fa-regular fa-star';
+                }
+            },
+
+            nextPage() {
+                if (this.currentPage < this.totalPages) {
+                    this.currentPage++;
+                }
+            },
+            prevPage() {
+                if (this.currentPage > 1) {
+                    this.currentPage--;
+                }
+            }
+
         },
-        async created(){
-           await this.getBook();
+        mounted(){
+            this.getBook();
+            this.getUser();
+            this.getReviewByBookId();
+            this.getSimilarsBookId()
         }
     }
 </script>
@@ -334,7 +391,9 @@
     .author-name{
         font-size: 20px;
     }
-
+    .author-name:hover{ 
+        text-decoration: underline;
+    }
     .star-rate-book{
         display: flex;
         align-items: center;
@@ -443,8 +502,18 @@
         width: 100%;
         height: 250px;
     }
+    .recommend-book-info > h4 {
+        width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
     .recommend-book-info > p{
         font-size: 14px;
+        width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
     .recommend-book-info-rate{
         display: flex;
@@ -469,6 +538,23 @@
     .recommend-book-info-rate > p:nth-child(4){
         color: #707070;
     }
+    .pagination {
+    margin-top: 20px;
+}
+
+.pagination-btn {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.pagination-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
 
     .all-similar-books{
         margin-top: 10px;

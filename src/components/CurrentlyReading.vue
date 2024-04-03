@@ -17,10 +17,15 @@
             </div>
         </div>
         <div class="navigation">
-            <router-link class="view-all" to="/a">View all books</router-link>
-            <div></div>
-            <p class="add-book">Add a book</p>
+            <router-link class="view-all" to="/my-books">View all books</router-link>
+            <div v-if="showAddBook === false"></div>
+            <p v-if="showAddBook === false" @click="handleShowAddBook()" class="add-book">Add a book</p>
         </div>
+        <form v-if="showAddBook" class="form-add-book">
+            <input type="text" placeholder="Search book" >
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <i @click="handleShowAddBook()" class="fa-solid fa-xmark"></i>
+        </form>
     </div>
 </template>
 
@@ -28,16 +33,16 @@
 export default {
     props: {
         currentlyReading: { type: Array, default: [] },
-        wantToRead: { type: Array, default:[]}
     },
     data(){
-        return {test: this.wantToRead}
+        return {
+            showAddBook: false
+        }
     },
     methods: {
-    //    test(){
-    //     const test = this.wantToRead;
-    //     console.log("teets",test);
-    //    }
+        handleShowAddBook(){
+            this.showAddBook = !this.showAddBook;
+        }
     },
     mounted(){
     }
@@ -110,5 +115,36 @@ export default {
 }
 .add-book:hover{
     text-decoration: underline;
+}
+.form-add-book{
+    margin-top: 10px;
+    position: relative;
+    width: 90%;
+    display: flex;
+    align-items: center;
+    
+}
+.form-add-book > input{
+    border: #DCD6CC 1px solid;
+    border-radius: 3px;
+    background: #FFFFFF;
+    color: #333333;
+    height: 30px;
+    padding: 4px 26px 4px 8px;
+    width: 100%;
+    margin-right: 20px;
+}
+.form-add-book > input:focus{
+    box-shadow: 0 0 4px rgba(185,173,153,0.5);
+    border-color: #B9AD99;
+    outline: 0px;
+}
+.form-add-book > i:nth-child(2) {
+    position: absolute;
+    right: 40px;
+    cursor: pointer;
+}
+.form-add-book > i:nth-child(3){
+    cursor: pointer;
 }
 </style>

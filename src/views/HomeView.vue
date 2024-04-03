@@ -2,16 +2,17 @@
     <div class="page">
         <div class="read">
             <div class="currently-reading">
-                <CurrentlyReading :currentlyReading="currentlyReading" :wantToRead="wantToRead" />
+                <CurrentlyReading :currentlyReading="currentlyReading" />
             </div>
             <hr>
             <div class="want-to-read">
                 <h5>WANT TO READ</h5>
                 <div class="content-want-to-read">
-                    <img src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1545314990i/10433999._SY180_.jpg" alt="">
-                    <img src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1545314990i/10433999._SY180_.jpg" alt="">
+                    <router-link v-for="(book, index) in wantToRead" :key="index" :to="'/book/detail/' +  book.bookId">
+                        <img :src="book.image" alt="">
+                    </router-link>
                 </div>
-                <router-link to="/a">View all books</router-link>
+                <router-link to="/my-books">View all books</router-link>
             </div>
             <hr>
         </div>
@@ -19,7 +20,7 @@
             <Posts />
         </div>
         <div class="recommend">
-            <Recommend />
+            <Recommend :recommendations="recommendations" :user="user" @handleStatus="handleStatus"/>
         </div>
     </div>
 </template>
@@ -30,6 +31,8 @@ import Recommend from "../components/Recommend.vue";
 import UserService from "../services/user.service";
 import MyBookService from "../services/myBook.service";
 import BookService from "../services/book.service";
+import AuthService from "../services/AuthService";
+import RecommendService from "../services/recommend.service";
 export default {
     components: {
         CurrentlyReading,
@@ -43,6 +46,8 @@ export default {
             wantToRead: [],
             read: [],
             isLoading: false,
+            recommendations: [],
+            myBooks: []
         }
     },
     computed:{
@@ -51,22 +56,55 @@ export default {
     methods: {
         async getUser() {
             try {
-                this.user = await UserService.get("U001");
+                AuthService.checkAuthentication();
+                const email = AuthService.user.Email;
+                this.user = await UserService.getUserByEmail(email);
+                this.getBookByStatus(this.user.userId);
+                this.getRecommended(this.user.userId);
+                this.getMyBookByUserId(this.user.userId);
             } catch (error) {
                 console.error(error);
             }
         },
-        async getBookByStatus(){
+        async getMyBookByUserId(userId) {
+            try {
+                this.myBooks = await MyBookService.getByUserId(userId);
+            } catch (error) {
+                console.error("Lỗi khi kiểm tra sách được đề xuất:", error);
+                throw error;
+            }
+
+        },
+        checkRecommendedBook(bookId){
+            const bookExists = !this.myBooks.some(book => book.bookId === bookId);
+            return bookExists;
+        },
+        async getRecommended(userId){
+            const recommendationsBookIds = await RecommendService.get(userId);
+            
+            for (const recommendationsBookId of recommendationsBookIds) {
+                if(this.checkRecommendedBook(recommendationsBookId)){
+                    this.getBookByBookId(recommendationsBookId);
+                } else {
+                    continue
+                }
+            }
+        },
+        async getBookByBookId(bookId) {
+            const book = await BookService.getByBookId(bookId);
+            this.recommendations.push(book);
+        },
+        async getBookByStatus(userId){
             const data1 = {
-                userId: "U001",
+                userId: userId,
                 status: "Currently Reading",
             };
             const data2 = {
-                userId: "U001",
+                userId: userId,
                 status: "Want To Read",
             };
             const data3 = {
-                userId: "U001",
+                userId: userId,
                 status: "Read",
             };
             try {
@@ -74,15 +112,28 @@ export default {
                 for (const book of currentlyReadingLocal) {
                     this.currentlyReading.push(await BookService.getByBookId(book.bookId));
                 }
-                this.wantToRead = await MyBookService.getByStatus(data2);
+                const wantToReadLocal = await MyBookService.getByStatus(data2);
+                for (const book of wantToReadLocal) {
+                    this.wantToRead.push(await BookService.getByBookId(book.bookId));
+                }
+
             } catch (error) {
                 
             }
+        },
+        async handleStatus(data){
+            try {
+                 const create = await MyBookService.create(data);
+                window.location.reload();
+            } catch (error) {
+                console.log(error);
+            }
+           
         }
     },
-    created(){
+    mounted(){
         this.getUser();
-        this.getBookByStatus();
+        
     },
 };
 </script>
@@ -110,11 +161,14 @@ export default {
     margin-top: 10px;
     margin-bottom: 5px;
 }
-.content-want-to-read > img{
+.content-want-to-read  img{
     margin-right: 5px;
     height: 96px;
     width: 96px;
     object-fit: cover;
+}
+.want-to-read a:hover{
+    text-decoration: underline;
 }
 .update{
     width: 600px;

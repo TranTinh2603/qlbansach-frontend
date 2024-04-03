@@ -170,7 +170,7 @@
                     <div v-if="activeDropdown === 'message'" class="message">
                         <div class="header-message">
                             <h5>MESSAGE</h5>
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            <router-link to="/user/messages"><i class="fa-solid fa-arrow-up-right-from-square"></i></router-link>
                         </div>
                         <div class="search-message">
                             <i class="fa-solid fa-magnifying-glass"></i>
@@ -208,7 +208,7 @@
                         <i class="fa-solid fa-user"></i>
                     </div>
                     <ul v-if="activeDropdown === 'user'" class="dropdown-menu-user">
-                        <h4>Trần Trung Tính</h4>
+                        <h4>{{ user.Name }}</h4>
                         <li><router-link to="/user/profile">Profile</router-link></li>
                         <li><router-link to="/user/friends">Friends</router-link></li>
                         <li><router-link to="/user/groups">Groups</router-link></li>
@@ -225,6 +225,7 @@
 import InputSearch from "@/components/InputSearch.vue";
 import ProductService from "../services/product.service";
 import AuthService from '../services/AuthService';
+import UserService from '../services/user.service';
 export default {
     components: {
         InputSearch,
@@ -236,6 +237,7 @@ export default {
             searchText: "",
             searchResults: [],
             isAuthenticated: AuthService.isAuthenticated,
+            user: {}
         };
     },
 
@@ -250,6 +252,12 @@ export default {
     },
 
     methods: {
+        async getUser(){
+            AuthService.checkAuthentication();
+            const email = AuthService.user.Email;
+            this.user = await UserService.getUserByEmail(email)
+        },
+
         checkAuthentication() {
             AuthService.checkAuthentication();
             this.isAuthenticated = AuthService.isAuthenticated;
@@ -301,7 +309,8 @@ export default {
         }
 
     },
-    created() {
+    mounted() {
+        this.getUser();
         this.checkAuthentication();
         // document.body.addEventListener('click', this.hideDropdown);
     },
