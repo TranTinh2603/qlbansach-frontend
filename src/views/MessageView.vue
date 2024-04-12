@@ -101,15 +101,12 @@ export default {
             roomId: "",
         };
     },
-    // created() {
-    //    // Listen for 'chat message' event from the server
-       
-    // },
     methods: {
         async getUser(){
             AuthService.checkAuthentication()
             const email = AuthService.user.Email;
             this.user = await UserService.getUserByEmail(email);
+            socket.emit('setUserId', this.user.userId)
             for (const userId of this.user.Friends){
                 this.getFriend(userId)
             }

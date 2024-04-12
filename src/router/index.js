@@ -104,6 +104,42 @@ const routes = [
         component: () => import("@/views/OrderDetailView.vue"),
         props: true
     },
+    {
+        path: "/community/group/",
+        name: "community.group",
+        component: () => import("@/views/GroupView.vue"),
+    },
+    {
+        path: "/community/group/add",
+        name: "community.group.add",
+        component: () => import("@/views/GroupAddView.vue"),
+    },
+    {
+        path: "/community/quote/",
+        name: "community.quote",
+        component: () => import("@/views/QuoteView.vue"),
+    },
+    {
+        path: "/community/quote/add",
+        name: "community.quote.add",
+        component: () => import("@/views/QuoteAddView.vue"),
+    },
+    {
+        path: "/community/quote/my-quote",
+        name: "community.quote.my-quote",
+        component: () => import("@/views/MyQuoteView.vue"),
+    },
+    {
+        path: "/community/quote/liked-quote",
+        name: "community.quote.liked-quote",
+        component: () => import("@/views/LikedQuoteView.vue"),
+    },
+    {
+        path: "/community/quote/my-quote/edit/:quoteId",
+        name: "community.quote.my-quote.edit",
+        component: () => import("@/views/MyQuoteEditView.vue"),
+        props: true
+    },
 
 ];
 

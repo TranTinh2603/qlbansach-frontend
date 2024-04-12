@@ -50,4 +50,11 @@ export default {
     text-decoration: none;
     color: black;
   }
+
+/* .jetbrains-mono-<uniquifier> {
+  
+  font-optical-sizing: auto;
+  font-weight: <weight>;
+  
+} */
 </style>

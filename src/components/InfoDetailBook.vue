@@ -87,8 +87,8 @@
                     <div class="content-my-review">
                         <div class="info-my-review">
                             <img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1691147319i/11273677.jpg" alt="">
-                            <p>Trần Tính</p>
-                            <p>1 reviews</p>
+                            <p>{{ user.Name }}</p>
+                            <p>{{ myReviews.length }} reviews</p>
                         </div>
                         <div class="rate-my-review">
                             <div class="star-rate-my-review">
@@ -96,7 +96,8 @@
                                 <i v-for="emtyStart in 5 - (getMyReview(reviews, user.userId) ? getMyReview(reviews, user.userId).rating : 0)" class="fa-regular fa-star"></i>
                             </div>
                             <div class="button-write-a-review">
-                                <button>Write a Review</button>
+                                <span v-if="getMyReview(reviews, user.userId) && getMyReview(reviews, user.userId).review !== ''">{{ getMyReview(reviews, user.userId).review }}</span>
+                                <button v-else>Write a Review</button>
                             </div>
                         </div>
                         <div class="time-my-review">
@@ -109,71 +110,67 @@
             <div class="community-reviews">
                 <h3>Community Reviews</h3>
                 <div class="star-rate-community-reviews">
-                    <i class="fa-regular fa-star"></i>
-                    <i class="fa-regular fa-star"></i>
-                    <i class="fa-regular fa-star"></i>
-                    <i class="fa-regular fa-star"></i>
-                    <i class="fa-regular fa-star"></i>
-                    <h3>4.27</h3>
+                    <i v-for="starIndex in 5" :key="starIndex" :class="starClass(starIndex, reviews)" style="color: #e87400"></i>
+                    <h3>{{ avgRating(reviews) }}</h3>
                     <div class="ratings-number-community-reviews">
-                        <p>1234 ratings</p>
+                        <p>{{ reviews.length }} ratings</p>
                         <div></div>
-                        <p>123 reviews</p>
+                        <p>{{ countReview(reviews) }} reviews</p>
                     </div>
                 </div>
                 <div class="detail-star-rate-community-reviews">
-                    <div class="five-star">
+                    <div class="star">
                         <p>5 stars</p>
                         <div class="chart-rate-container">
                             <div class="chart-rate-container-value">
-                                <div class="chart-rate-value"></div>
+                                <div class="chart-rate-value" :style="'width:' + ratioStar(reviews, countStarRating(reviews).five) + '%;' "></div>
                             </div>
                         </div>
-                        <p>39%</p>
+                        <p>{{ countStarRating(reviews).five }} ({{ ratioStar(reviews, countStarRating(reviews).five) }}%)</p>
                     </div>
-                    <div class="five-star">
-                            <p>5 stars</p>
+                    <div class="star">
+                            <p>4 stars</p>
                             <div class="chart-rate-container">
                                 <div class="chart-rate-container-value">
-                                    <div class="chart-rate-value"></div>
+                                    <div class="chart-rate-value" :style="'width:' + ratioStar(reviews, countStarRating(reviews).four) + '%;'"></div>
                                 </div>
                             </div>
-                            <p>39%</p>
+                            <p>{{ countStarRating(reviews).four }} ({{ ratioStar(reviews, countStarRating(reviews).four) }}%)</p>
                         </div>
-                    <div class="five-star">
-                        <p>5 stars</p>
+                    <div class="star">
+                        <p>3 stars</p>
                         <div class="chart-rate-container">
                             <div class="chart-rate-container-value">
-                                <div class="chart-rate-value"></div>
+                                <div class="chart-rate-value" :style="'width:' + ratioStar(reviews, countStarRating(reviews).three) + '%;'"></div>
                             </div>
                         </div>
-                        <p>39%</p>
+                        <p>{{ countStarRating(reviews).three }} ({{ ratioStar(reviews, countStarRating(reviews).three) }}%)</p>
                     </div>
-                    <div class="five-star">
-                        <p>5 stars</p>
+                    <div class="star">
+                        <p>2 stars</p>
                         <div class="chart-rate-container">
                             <div class="chart-rate-container-value">
-                                <div class="chart-rate-value"></div>
+                                <div class="chart-rate-value" :style="'width:' + ratioStar(reviews, countStarRating(reviews).two) + '%;'"></div>
                             </div>
                         </div>
-                        <p>39%</p>
+                        <p>{{ countStarRating(reviews).two }} ({{ ratioStar(reviews, countStarRating(reviews).two) }}%)</p>
                     </div>
-                    <div class="five-star">
-                        <p>5 stars</p>
+                    <div class="star">
+                        <p>1 stars</p>
                         <div class="chart-rate-container">
                             <div class="chart-rate-container-value">
-                                <div class="chart-rate-value"></div>
+                                <div class="chart-rate-value" :style="'width:' + ratioStar(reviews, countStarRating(reviews).one) + '%;'"></div>
                             </div>
                         </div>
-                        <p>39%</p>
+                        <p>{{ countStarRating(reviews).one }} ({{ ratioStar(reviews, countStarRating(reviews).one) }}%)</p>
                     </div>
                 </div>
-                <div class="detail-community-reviews">
+                <div v-if="getCommentBook().length > 0" v-for="(comment, index) in getCommentBook()" :key="index" class="detail-community-reviews">
                     <div class="info-user-community-reviews">
                         <img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1630482892i/11378463.jpg" alt="">
-                        <h4>Trần Tính</h4>
+                        <h4>{{ getUserReview(comment.userId) ? getUserReview(comment.userId).Name : '' }}</h4>
                         <div>
-                            <p>123 reviews</p>
+                            <p>{{ countUserCommunityReviews(comment.userId).length }} reviews</p>
                             <p>741 followers</p>
                         </div>
                         <button>Follow</button>
@@ -192,9 +189,8 @@
                             </div>
                         </div>
                         <div class="content-user-comment">
-                            <span>Tác phẩm miêu tả cuộc phiêu lưu của một chú Dế Mèn qua thế giới loài vật và loài người. Những vấn đề nóng hổi như là: cái thiện và cái ác, chiến tranh và hòa bình, lí tưởng và lẽ sống được thể hiện một cách nhẹ nhàng, tinh tế mà sâu sắc.
-                                Cậy mình là chàng dế cường tráng, Mèn dương dương tự đắc, cho mình là tay ghê gớm. Trải qua hai bài học đắt giá là cái chết của của dế Choắt và bị bác Xiến Tóc cắt đứt mất hai sợi râu mượt óng mà Mèn mới tỉnh ngộ, hiểu ra thế nào là lòng nhân ái và cái giá phải trả cho sự ngông nghênh của mình. 
-                                Từ đó Mèn quyết chí đi chu du thiên hạ, chí hướng của Mèn càng được củng cố sau khi chú làm được việc có ích đầu tiên trong đời đó là cứu giúp chị Nhà Trò yếu đuối thoát nạn lũ nhện hung ác. Không những thế chú còn được sự ủng hộ hết lòng của mẹ kính yêu và kết giao được với người bạn tri kỉ là Dế Trũi.
+                            <span>
+                                {{ comment.review }}
                             </span>
                         </div>
                         <div class="content-user-like-comment">
@@ -212,53 +208,9 @@
                         </div>
                         <hr>
                     </div>
+                    
                 </div>
-                <div class="detail-community-reviews">
-                        <div class="info-user-community-reviews">
-                            <img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1630482892i/11378463.jpg" alt="">
-                            <h4>Trần Tính</h4>
-                            <div>
-                                <p>123 reviews</p>
-                                <p>741 followers</p>
-                            </div>
-                            <button>Follow</button>
-                        </div>
-                        <div class="content-user-community-reviews">
-                            <div class="content-user-rate-and-time">
-                                <div class="content-user-rate">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                </div>
-                                <div class="content-user-time">
-                                    <span>25/02/2024</span>
-                                </div>
-                            </div>
-                            <div class="content-user-comment">
-                                <span>
-                                    Tác phẩm miêu tả cuộc phiêu lưu của một chú Dế Mèn qua thế giới loài vật và loài người. Những vấn đề nóng hổi như là: cái thiện và cái ác, chiến tranh và hòa bình, lí tưởng và lẽ sống được thể hiện một cách nhẹ nhàng, tinh tế mà sâu sắc.
-                                    Cậy mình là chàng dế cường tráng, Mèn dương dương tự đắc, cho mình là tay ghê gớm. Trải qua hai bài học đắt giá là cái chết của của dế Choắt và bị bác Xiến Tóc cắt đứt mất hai sợi râu mượt óng mà Mèn mới tỉnh ngộ, hiểu ra thế nào là lòng nhân ái và cái giá phải trả cho sự ngông nghênh của mình. 
-                                    Từ đó Mèn quyết chí đi chu du thiên hạ, chí hướng của Mèn càng được củng cố sau khi chú làm được việc có ích đầu tiên trong đời đó là cứu giúp chị Nhà Trò yếu đuối thoát nạn lũ nhện hung ác. Không những thế chú còn được sự ủng hộ hết lòng của mẹ kính yêu và kết giao được với người bạn tri kỉ là Dế Trũi.
-                                </span>
-                            </div>
-                            <div class="content-user-like-comment">
-                                <p>32 like</p>
-                                <div class="like-and-comment">
-                                    <div>
-                                        <i class="fa-regular fa-heart"></i>
-                                        <p>Like</p>
-                                    </div>
-                                    <div>
-                                        <i class="fa-regular fa-comment"></i>
-                                        <p>Comment</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr>
-                        </div>
-                    </div>
+                
             </div>
         </div>
     </template>
@@ -278,12 +230,13 @@
                 book: {},
                 author: {},
                 user: {},
-
                 reviews: [],
+                myReviews: [],
+                userReviews: [],
                 similarBooks: [],
                 currentPage: 1,
-                itemsPerPage: 4
-                
+                itemsPerPage: 4,
+                reviewsByUserId: [],
             }
         },
         computed: {
@@ -301,6 +254,7 @@
                 AuthService.checkAuthentication();
                 const email = AuthService.user.Email;
                 this.user = await UserService.getUserByEmail(email);
+                this.getReviewByUserId(this.user.userId)
             },
             async getSimilarsBookId() {
                 const similars = await SimilarService.get(this.id);
@@ -314,18 +268,46 @@
             },
             async getBook(){
                 this.book = await BookService.getByBookId(this.id);
-                this.getAuthorByName(this.book.author);
+                this.getAuthorByName(this.book.author);     
             },
             async getAuthorByName(name){
                 this.author = await AuthorService.getByName(name);
             },
             async getReviewByBookId(){
                 this.reviews = await ReviewService.getByBookId(this.id);
-                console.log(this.reviews);
+                this.getUserByUserId(this.reviews)
+            },
+            async getReviewCommunityByUserId(userId){
+                const reviewsByUserId1 = await ReviewService.getReviewByUserId(userId)
+                this.reviewsByUserId.push(reviewsByUserId1)
+
+            },
+            async getUserByUserId(reviews){
+                for (const review of reviews){
+                    const userReview = await UserService.get(review.userId)
+                    this.userReviews.push(userReview)
+                    this.getReviewCommunityByUserId(review.userId)
+                }
+            },
+            async getReviewByUserId(userId){
+                this.myReviews = await ReviewService.getReviewByUserId(userId);
+            },
+            getReview(userId){
+                return this.reviews.find(review => review.userId === userId)
+            },
+            getCommentBook() {
+                return this.reviews.filter(review => review.review !== '')
             },
             getMyReview(reviews, userId) {
                 const myReview = reviews.find(review => review.userId === userId)
                 return myReview
+            },
+            getUserReview(userId){
+                return this.userReviews.find(userReview => userReview.userId === userId)
+            },
+            countUserCommunityReviews(userId) {
+                const reviewsByUserIdLocal = [].concat(...this.reviewsByUserId);
+                return reviewsByUserIdLocal.filter(review => review.userId === userId)
             },
             countReview(reviews){
                 let count = 0;
@@ -335,6 +317,40 @@
                     }
                 }
                 return count;
+            },
+            countStarRating(reviews){
+                const data = {
+                    one: 0,
+                    two: 0,
+                    three: 0,
+                    four: 0,
+                    five: 0,
+                }
+                for (const review of reviews){
+                    if (review.rating === 5){
+                        data.five++
+                    } else if (review.rating === 4){
+                        data.four++
+                    } else if (review.rating === 3) {
+                        data.three++
+                    } else if (review.rating === 2){
+                        data.two++
+                    } else {
+                        data.one++
+                    }
+                }
+                return data
+            },
+            ratioStar(reviews,quantityStar){
+                const totalStar = reviews.length
+                if (totalStar === 0){
+                    return 0
+                } else {
+                    const ratio = (quantityStar / totalStar) * 100;
+                    return ratio
+                }
+                
+               
             },
             avgRating(reviews){
                 let avgRating = 0.0;
@@ -522,7 +538,7 @@
     }
     .recommend-book-info-rate > i {
         margin-right: 5px;
-        color: yellow;
+        color: #e87400;
     }
     .recommend-book-info-rate > p:nth-child(2){
         font-weight: 600;
@@ -600,6 +616,7 @@
     }
     .star-rate-my-review  > i{
         margin-right: 5px;
+        color: #e87400;
     }
     .button-write-a-review > button{
         cursor: pointer;
@@ -653,11 +670,11 @@
         margin-top: 10px;
         margin-bottom: 10px;
     }
-    .five-star{
+    .star{
         display: flex;
         align-items: center;
     }
-    .five-star > p{
+    .star > p{
         font-weight: 600;
     }
     .chart-rate-container{
@@ -678,7 +695,6 @@
     }
     .chart-rate-value{
         height: 12px;
-        width: 39%;
         background-color: #e87400;
     }
     .detail-community-reviews{
@@ -710,6 +726,7 @@
     }
     .content-user-community-reviews{
         margin-left: 20px;
+        flex: auto;
     }
     .content-user-rate-and-time {
         display: flex;

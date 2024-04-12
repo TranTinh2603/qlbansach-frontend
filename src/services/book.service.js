@@ -13,6 +13,9 @@ class BookService {
     // async deleteAll() {
     //     return (await this.api.delete("/")).data;
     // }
+    async getALl() {
+        return (await this.api.get('/')).data;
+    }
     async getByBookId(id) {
         return (await this.api.get(`/find/${id}`)).data;
     }

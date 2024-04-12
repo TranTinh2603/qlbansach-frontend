@@ -1,7 +1,7 @@
 import createApiClient from "./api.service";
 
-class AuthorService {
-    constructor(baseUrl = "/api/authors") {
+class TagService {
+    constructor(baseUrl = "/api/tags") {
         this.api = createApiClient(baseUrl);
     }
     // async getByEmail(email) {
@@ -10,23 +10,23 @@ class AuthorService {
     // async create(data) {
     //     return (await this.api.post("/", data)).data;
     // }
+    async getAll() {
+        return (await this.api.get("/")).data;
+    }
     // async deleteAll() {
     //     return (await this.api.delete("/")).data;
     // }
-    async getByName(name) {
-        return (await this.api.get(`/${name}`)).data;
-    }
-    async getByNameRecommend(name) {
-        return (await this.api.get(`/recommend/${name}`)).data;
-    }
-    // async getByStatus(data) {
-    //     return (await this.api.post("/find", data)).data;
+    // async get(id) {
+    //     return (await this.api.get(`/${id}`)).data;
     // }
-    // async update(id, data) {
-    //     return (await this.api.put(`/${id}`, data)).data;
+    // async getUserByEmail(email) {
+    //     return (await this.api.get(`/find-by-email/${email}`)).data;
+    // }
+    // async updateFriends(userId, data) {
+    //     return (await this.api.put(`/${userId}`, data)).data;
     // }
     // async delete(id) {
     //     return (await this.api.delete(`/${id}`)).data;
     // }
 }
-export default new AuthorService();
+export default new TagService();

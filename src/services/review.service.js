@@ -19,6 +19,10 @@ class ReviewService {
     async getByBookId(bookId) {
         return (await this.api.get(`/${bookId}`)).data;
     }
+
+    async getReviewByUserId(userId) {
+        return (await this.api.get(`/find-by-user-id/${userId}`)).data;
+    }
     // async getByStatus(data) {
     //     return (await this.api.post("/find", data)).data;
     // }
