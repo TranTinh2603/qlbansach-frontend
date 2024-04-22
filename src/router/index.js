@@ -115,6 +115,36 @@ const routes = [
         component: () => import("@/views/GroupAddView.vue"),
     },
     {
+        path: "/community/group/detail/:groupId",
+        name: "community.group.detail",
+        component: () => import("@/views/GroupDetailView.vue"),
+        props: true
+    },
+    {
+        path: "/community/group/bookshelf/:groupId",
+        name: "community.group.bookshelf",
+        component: () => import("@/views/GroupBookshelfView.vue"),
+        props: true
+    },
+    {
+        path: "/community/group/discussion/:groupId",
+        name: "community.group.discussion",
+        component: () => import("@/views/GroupDiscussionView.vue"),
+        props: true
+    },
+    {
+        path: "/community/group/member/:groupId",
+        name: "community.group.member",
+        component: () => import("@/views/GroupMemberView.vue"),
+        props: true
+    },
+    {
+        path: "/community/group/send-invite/:groupId",
+        name: "community.group.send-invite",
+        component: () => import("@/views/GroupSendInviteView.vue"),
+        props: true
+    },
+    {
         path: "/community/quote/",
         name: "community.quote",
         component: () => import("@/views/QuoteView.vue"),

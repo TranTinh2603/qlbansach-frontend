@@ -22,8 +22,8 @@
                                 <span>― {{ quote.author + ', ' + quote.book }}</span>
                             </div>
                             <div class="action-quote">
-                                <button @click="handleEdit(quote.quoteId)" class="edit-quote">Edit <i class="fa-solid fa-pen"></i></button>
-                                <button @click="handleDelete(quote.quoteId)" class="delete-quote">Delete <i class="fa-solid fa-trash"></i></button>
+                                <button @click="handleEdit(quote.quoteId)" class="edit-quote">Edit</button>
+                                <button @click="handleDelete(quote.quoteId)" class="delete-quote">Delete</button>
                             </div>
                         </div>
                         <div class="tags-likes-quote">

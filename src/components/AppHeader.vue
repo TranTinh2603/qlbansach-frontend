@@ -98,10 +98,10 @@
                         <i id="icon-nav" class="fa-solid fa-book-open"></i>
                         <p>My Books</p>
                     </router-link>
-                    <router-link class="nav-link" to="/shop">
+                    <!-- <router-link class="nav-link" to="/shop">
                         <i id="icon-nav" class="fa-solid fa-shop"></i>
                         <p>Shop</p>
-                    </router-link>
+                    </router-link> -->
                 
                 <div class="dropdown" @click="toggleDropdown('categorys')">
                     <p class="dropdown-toggle">Categorys <i class="fa-solid fa-sort-down" id="icon-down"></i></p>
@@ -119,10 +119,10 @@
                     <p class="dropdown-toggle">Community <i class="fa-solid fa-sort-down" id="icon-down"></i></p>
                     <ul v-if="activeDropdown === 'community'" class="dropdown-menu">
                         <li><router-link to="/community/group">Groups</router-link></li>
-                        <li><router-link to="/community/discussions">Discussions</router-link></li>
+                        <!-- <li><router-link to="/community/discussions">Discussions</router-link></li> -->
                         <li><router-link to="/community/quote">Quotes</router-link></li>
-                        <li><router-link to="/community/ask-the-author">Ask the Author</router-link></li>
-                        <li><router-link to="/community/people">People</router-link></li>
+                        <!-- <li><router-link to="/community/ask-the-author">Ask the Author</router-link></li>
+                        <li><router-link to="/community/people">People</router-link></li> -->
                     </ul>
                 </div>
             </div>

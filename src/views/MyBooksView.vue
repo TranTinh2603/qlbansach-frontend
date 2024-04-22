@@ -28,11 +28,11 @@
                 <table>
                     <tr style="border-bottom: 2px solid #ebe8d5; font-size: 14px;">
                         <th style="width: 60px;">Image</th>
-                        <th  style="width: 100px;">Title</th>
-                        <th  style="width: 70px;">Author</th>
-                        <th  style="width: 30px;">Avg Rating</th>
-                        <th  style="width: 90px;">My Rating</th>
-                        <th  style="width: 100px;">Shelves</th>
+                        <th style="width: 100px;">Title</th>
+                        <th style="width: 70px;">Author</th>
+                        <th style="width: 30px;">Avg Rating</th>
+                        <th style="width: 90px;">My Rating</th>
+                        <th style="width: 100px;">Shelves</th>
                         <th> My Review</th>
                         <th  style="width: 30px;"></th>
                     </tr>

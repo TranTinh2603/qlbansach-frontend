@@ -7,6 +7,20 @@
                 <input type="submit" class="search-submit" value="Search groups">
             </div>
             <div class="content-my-groups">
+                <h3>My groups created</h3>
+                <div class="my-groups-list">
+                    <div v-for="(myGroupCreated, index) in myGroupsCreated" :key="index" class="my-group-item">
+                        <img src="https://images.gr-assets.com/groups/1479936067p3/179584.jpg" alt="">
+                        <div class="info-my-group-item">
+                            <router-link :to="'/community/group/detail/' + myGroupCreated.groupId" >{{ myGroupCreated.name }}</router-link>
+                            <span class="active">
+                                23 minutes ago
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content-my-groups">
                 <h3>My groups</h3>
                 <div class="my-groups-list">
                     <div class="my-group-item">
@@ -19,9 +33,9 @@
                         </div>
                     </div>
                     <div class="my-group-item">
-                        <img src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/groups/1269147049i/220._UY75_CR10,0,75,75_.jpg" alt="">
+                        <img src="https://images.gr-assets.com/groups/1479936067p3/179584.jpg" alt="">
                         <div class="info-my-group-item">
-                            <router-link to="/">Goodreads Librarians Group</router-link>
+                            <router-link to="/">Our Shared Shelf</router-link>
                             <span class="active">
                                 23 minutes ago
                             </span>
@@ -30,7 +44,7 @@
                     <div class="my-group-item">
                         <img src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/groups/1269147049i/220._UY75_CR10,0,75,75_.jpg" alt="">
                         <div class="info-my-group-item">
-                            <router-link to="/">Goodreads Librarians Group</router-link>
+                            <router-link to="/">Oprah's Book Club (Official)</router-link>
                             <span class="active">
                                 23 minutes ago
                             </span>
@@ -68,10 +82,34 @@
         </div>
     </div>
 </template>
-
 <script>
+import AuthService from '../services/AuthService';
+import UserService from '../services/user.service';
+import GroupService from '../services/group.service';
+export default {
+    data(){
+        return {
+            user: {},
+            myGroupsCreated: [],
+        }
+    },
+    methods: {
+        async getUser(){
+            AuthService.checkAuthentication();
+            const email = AuthService.user.Email;
+            this.user = await UserService.getUserByEmail(email);
+            this.getMyGroupsCreated(this.user.userId)
+        },
+        async getMyGroupsCreated(userId){
+            this.myGroupsCreated = await GroupService.getByUserId(userId)
+            console.log(this.myGroupsCreated);
+        }
+    } ,
+    mounted(){
+        this.getUser()
+    }
+}
 </script>
-
 <style scoped>
     .container{
         display: flex;
