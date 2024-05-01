@@ -22,6 +22,9 @@ class BookService {
     async getByLiveSearch(searchText) {
         return (await this.api.get(`/live-search/${searchText}`)).data;
     }
+    async getByAuthorName(authorName) {
+        return (await this.api.get(`/author/${authorName}`)).data;
+    }
     // async getByStatus(data) {
     //     return (await this.api.post("/find", data)).data;
     // }

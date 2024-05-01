@@ -1,7 +1,7 @@
     <template>
         <div class="info-detail">
             <h1 class="book-name">{{ book.name }}</h1>
-            <router-link to="/" class="author-name">{{ book.author }}</router-link>
+            <router-link :to="'/author/detail/' + book.author" class="author-name">{{ book.author }}</router-link>
             <div class="star-rate-book">
                 <i v-for="starIndex in 5" :key="starIndex" :class="starClass(starIndex, reviews)" style="color: #e87400"></i>
                 <h3>{{ avgRating(reviews) }}</h3>
@@ -27,7 +27,7 @@
                         <p>Language</p>
                     </div>
                     <div class="value-information">
-                        <p>{{ book.category }}</p>
+                        <p>{{ getCategoryByCategoryId(book.category) ? getCategoryByCategoryId(book.category).name : '' }}</p>
                         <p>{{ book.page + ' Pages' }}</p>
                         <p>{{ book.published }}</p>
                         <p>{{ book.language }}</p>
@@ -40,11 +40,11 @@
                 <div class="info-about-the-author">
                     <img :src="author.image" alt="">
                     <div class="name-author">
-                        <p>{{ author.name}}</p>
+                        <router-link :to="'/author/detail/' + book.author">{{ author.name}}</router-link>
                         <div class="book-and-follower">
-                            <p>{{ author.books && author.books.length ? author.books.length :'' }} books</p>
+                            <p>{{ booksByAuthorName ? booksByAuthorName.length : '' }} books</p>
                             <div></div>
-                            <p>123 followers</p>
+                            <p>{{ author.followers ? author.followers.length : '' }} followers</p>
                         </div>
                     </div>
                     <button class="button-follow">Follow</button>
@@ -60,14 +60,14 @@
                     <div v-for="(similarBook, index) in paginatedSimilarBooks" :key="index" class="recommend-book">
                         <img :src="similarBook.image" alt="">
                         <div class="recommend-book-info">
-                            <h4>{{ similarBook.name }}</h4>
-                            <p>{{ similarBook.author }}</p>
-                            <div class="recommend-book-info-rate">
+                            <h4><router-link :to="'/book/detail/' + similarBook.bookId">{{ similarBook.name }}</router-link></h4>
+                            <p><router-link :to="'/author/detail/' + similarBook.author">{{ similarBook.author }}</router-link></p>
+                            <!-- <div class="recommend-book-info-rate">
                                 <i class="fa-solid fa-star"></i>
                                 <p>4.42</p>
                                 <div></div>
                                 <p>4321</p>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -87,7 +87,7 @@
                     <div class="content-my-review">
                         <div class="info-my-review">
                             <img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1691147319i/11273677.jpg" alt="">
-                            <p>{{ user.Name }}</p>
+                            <p>{{ user.fristName + ' ' + user.lastName }}</p>
                             <p>{{ myReviews.length }} reviews</p>
                         </div>
                         <div class="rate-my-review">
@@ -96,12 +96,15 @@
                                 <i v-for="emtyStart in 5 - (getMyReview(reviews, user.userId) ? getMyReview(reviews, user.userId).rating : 0)" class="fa-regular fa-star"></i>
                             </div>
                             <div class="button-write-a-review">
-                                <span v-if="getMyReview(reviews, user.userId) && getMyReview(reviews, user.userId).review !== ''">{{ getMyReview(reviews, user.userId).review }}</span>
-                                <button v-else>Write a Review</button>
+                                <div v-if="getMyReview(reviews, user.userId)">
+                                    <p>{{ getMyReview(reviews, user.userId).review }}</p>
+                                    <router-link class="edit-review" :to="'/book/review/edit/' + (getMyReview(reviews, user.userId) ? getMyReview(reviews, user.userId).reviewId : '')">Edit Review</router-link>
+                                </div>
+                                <router-link :to="'/book/review/add/' + (book.bookId ? book.bookId : '')" v-else>Write a Review</router-link>
                             </div>
                         </div>
                         <div class="time-my-review">
-                            <p>24/02/2024</p>
+                            <p>{{ getMyReview(reviews, user.userId) ?  getMyReview(reviews, user.userId).createdAt : '' }}</p>
                         </div>
                     </div>
                 </div>
@@ -220,7 +223,8 @@
     import AuthorService from '../services/author.service';
     import UserService from '../services/user.service';
     import ReviewService from '../services/review.service';
-    import SimilarService from '../services/similar.service'
+    import SimilarService from '../services/similar.service';
+    import CategoryService from '../services/category.service'
     export default {
         props: {
             id: {type: String, default: ""},
@@ -237,7 +241,12 @@
                 currentPage: 1,
                 itemsPerPage: 4,
                 reviewsByUserId: [],
+                categories: [],
+                booksByAuthorName: [],
             }
+        },
+        watch: {
+            'id': 'reLoad'
         },
         computed: {
              paginatedSimilarBooks() {
@@ -250,9 +259,12 @@
             }
         },
         methods: {
+            reLoad(){
+                window.location.reload();
+            },
             async getUser() {
                 AuthService.checkAuthentication();
-                const email = AuthService.user.Email;
+                const email = AuthService.user.email;
                 this.user = await UserService.getUserByEmail(email);
                 this.getReviewByUserId(this.user.userId)
             },
@@ -268,7 +280,8 @@
             },
             async getBook(){
                 this.book = await BookService.getByBookId(this.id);
-                this.getAuthorByName(this.book.author);     
+                this.getAuthorByName(this.book.author);
+                this.getBookByAuthorName(this.book.author)     
             },
             async getAuthorByName(name){
                 this.author = await AuthorService.getByName(name);
@@ -291,6 +304,17 @@
             },
             async getReviewByUserId(userId){
                 this.myReviews = await ReviewService.getReviewByUserId(userId);
+            },
+
+            async getCategory(){
+                this.categories = await CategoryService.getAll();
+            },
+            async getBookByAuthorName(authorName){
+                this.booksByAuthorName = await BookService.getByAuthorName(authorName)
+            },
+            getCategoryByCategoryId(categoryId){
+                const category = this.categories.find(category => category.categoryId === categoryId)
+                return category
             },
             getReview(userId){
                 return this.reviews.find(review => review.userId === userId)
@@ -396,6 +420,7 @@
             this.getUser();
             this.getReviewByBookId();
             this.getSimilarsBookId()
+            this.getCategory()
         }
     }
 </script>
@@ -469,8 +494,12 @@
     .name-author{
         margin-left: 10px;
     }
-    .name-author > p{
+    .name-author > a{
         font-weight: 600;
+    }
+
+    .name-author > a:hover{
+        text-decoration: underline;
     }
     .book-and-follower{
         display: flex;
@@ -523,6 +552,9 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+    }
+    .recommend-book-info > h4:hover{
+        text-decoration: underline;
     }
     .recommend-book-info > p{
         font-size: 14px;
@@ -618,18 +650,37 @@
         margin-right: 5px;
         color: #e87400;
     }
-    .button-write-a-review > button{
+    .edit-review{
+        margin-top: 10px;
+        display: flex;
+        height: 30px;
+        padding: 0 10px;
+        font-size: 14px;
+        border: 2px solid rgba(39, 28, 20, 0.56);
+        border-radius: 20px;
+        justify-content: center;
+        align-items: center;
+        font-weight: 600;
+    }
+    .edit-review:hover{
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+    .button-write-a-review > a{
         cursor: pointer;
-        height: 48px;
-        padding: 0 32px;
-        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 30px;
+        padding: 0 10px;
+        font-size: 14px;
+        font-weight: 600;
         background-color: black;
         color: #ffffff;
         border: none;
         border-radius: 24px;
     }
-     .button-write-a-review > button:hover{
-        opacity: 0.7;
+     .button-write-a-review > a:hover{
+        background-color: #4f4f4d;
      }
     .community-reviews{
         margin-top: 10px;

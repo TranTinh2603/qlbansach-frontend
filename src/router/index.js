@@ -19,6 +19,18 @@ const routes = [
         props: true
     },
     {
+        path: "/book/review/edit/:reviewId",
+        name: "book.review.edit",
+        component: () => import("@/views/BookReviewEditView.vue"),
+        props: true
+    },
+    {
+        path: "/book/review/add/:bookId",
+        name: "book.review.add",
+        component: () => import("@/views/BookReviewAddView.vue"),
+        props: true
+    },
+    {
         path: "/author/detail/:name",
         name: "author.detail",
         component: () => import("@/views/AuthorDetailView.vue"),

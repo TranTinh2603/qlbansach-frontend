@@ -19,7 +19,9 @@ class ReviewService {
     async getByBookId(bookId) {
         return (await this.api.get(`/${bookId}`)).data;
     }
-
+    async getByReviewId(reviewId) {
+        return (await this.api.get(`/review/${reviewId}`)).data;
+    }
     async getReviewByUserId(userId) {
         return (await this.api.get(`/find-by-user-id/${userId}`)).data;
     }
@@ -29,8 +31,8 @@ class ReviewService {
     async updateReview(reviewId, data) {
         return (await this.api.put(`/review/${reviewId}`, data)).data;
     }
-    // async delete(id) {
-    //     return (await this.api.delete(`/${id}`)).data;
-    // }
+    async deleteReview(reviewId) {
+        return (await this.api.delete(`/review/${reviewId}`)).data;
+    }
 }
 export default new ReviewService();

@@ -234,12 +234,15 @@ export default {
                 book.currentRating = rating;
                 const date = new Date()
                 const timestamp = date.getTime();
+                const randomString = Math.random().toString(36).substring(5);
+                const result = randomString + '_' + timestamp;
                 const data = {
                     bookId: book.bookId,
                     userId: userId,
                     rating: book.currentRating,
                     review: "",
                     createdAt: timestamp,
+                    reviewId: result
                 }
                 const message = await ReviewService.create(data);
                 alert(message.message);
@@ -349,6 +352,7 @@ export default {
                         createdAt: timestamp
                     }
                     const updateReview = await ReviewService.updateReview(review.reviewId, data);
+                    console.log(updateReview);
                     if (updateReview) {
                         alert("Review updated successfully!")
                         window.location.reload();
@@ -372,8 +376,6 @@ export default {
             if (confirmDelete) {
                 const deleteMyBook = await MyBookService.delete(book._id)
                 window.location.reload();
-            } else {
-                console.log(2);
             }
         }
     },
