@@ -10,18 +10,17 @@
         </div>
         <div class="container-content-group">
             <div class="header-content-group">
-                <h2>Our Shared Shelf</h2>
+                <h2>{{ group.name }}</h2>
             </div>
+            
             <div class="body-content-container">
                 <div class="body-content-container-1">
+                    <div v-if="checkIsMemberGroup(user.userId, group) === false" class="join-group-content">
+                        <button @click="handleJoinGroup(user.userId)">{{ checkJoinRequest(user.userId, group) === true ? 'Sent Request' : 'Join Group' }}</button>
+                    </div>
                     <div class="description-content">
                         <span>
-                            OUR SHARED SHELF IS CURRENTLY DORMANT AND NOT MANAGED BY EMMA AND HER TEAM.
-                            Dear Readers,
-                            As part of my work with UN Women, I have started reading as many books and essays about equality as I can get my hands on. There is so much amazing stuff out there! Funny, inspiring, sad, thought-provoking, empowering! I’ve been discovering so much that, at times, I’ve felt like my head was about to explode… I decided to start a Feminist book club, as I want to share what I’m learning and hear your thoughts too.
-                            The plan is to select and read a book every month, then discuss the work during the month’s last week (to give everyone time to read it!). I will post some questions/quotes to get things started, but I would love for this to grow into an open discussion with and between you all. Whenever possible I hope to have the author, or another prominent voice on the subject, join the conversation.
-                            If you fancy it, please join up and participate. Everyone is welcome. I would be honoured!
-                            Emma x"
+                            {{ group.description }}
                         </span>
                     </div>
                     <div class="group-info-content">
@@ -29,104 +28,62 @@
                         <div class="show-group-info">
                             <div class="category">
                                 <div>category</div>
-                                <router-link to="/">Friends & Common Interest</router-link>
+                                <router-link to="/">{{ group.groupTopics }}</router-link>
                             </div>
                             <div class="tags">
                                 <div>tags</div>
-                                <router-link to="/">feminism</router-link>
+                                <p><router-link v-for="(tag, index) in group.tags" :key="index" to="/">{{ tag }}</router-link></p>
                             </div>
                             <div class="location">
                                 <div>location</div>
-                                <span>Việt Nam</span>
+                                <span>{{ group.country }}</span>
                             </div>
                             <div class="group-status">
                                 <div>group status</div>
-                                <span>This is a public group. Anyone can join and invite others to join.</span>
+                                <span>{{ group.status }}</span>
                             </div>
                             <div class="rule">
                                 <div>rule</div>
-                                <p>We encourage lively debate, passionate discussion, intellectual curiosity, and respectful interactions from all of our group members.
-
-    We ask that group members refrain from hate speech, gratuitous rudeness, threats, self-promotion, and spam.
-
-    The moderators of Our Shared Shelf reserve the right to remove posts in violation of these guidelines at their discretion, and to remove repeat offenders from the group.
-
-    While all are welcome, some of the books and themes we’ll discuss in Our Shared Shelf may be mature; readers should proceed at their own discretion.</p>
+                                <p>{{ group.rules }}</p>
                                 <span>more</span>
                             </div>
                             
                         </div>
                     </div>
                     <div class="discussion-content">
-                        <h5>DISCUSSION</h5>
-                        <div class="folder-discussion-list">
-                            <div class="folder-discussion-item">
+                        <h4><router-link :to="'/community/group/discussion/' + groupId">DISCUSSION</router-link></h4>
+                        <div v-if="group.discussions && group.discussions.length > 0" class="folder-discussion-list">
+                            <div v-for="(discussion, index) in group.discussions" :key="index" class="folder-discussion-item">
                                 <div class="header-folder-discussion-item">
                                     <div class="folder-name">
-                                        <router-link to="/">Announcements</router-link>
+                                        <router-link :to="'/community/group/discussion/folder/topic/' + groupId + '&' + discussion.folderId">{{ discussion.folderName }}</router-link>
                                     </div>
                                 </div>
                                 <div class="body-folder-discussion-item">
-                                    <div class="topic-discussion-item">
-                                        <div class="topic-name">
-                                            <router-link to="/">Reviews and Ratings for Hood Feminism</router-link>
-                                        </div>
-                                        <div class="topic-info">
-                                            <span>By Pam · 3 posts · 755 views</span>
-                                            <span>last updated Dec 26, 2022 02:37AM</span>
-                                        </div>
-                                    </div>
-                                    <div class="topic-discussion-item">
-                                        <div class="topic-name">
-                                            <router-link to="/">Your Reviews of Girl, Woman, Other</router-link>
-                                        </div>
-                                        <div class="topic-info">
-                                            <span>By Pam · 3 posts · 755 views</span>
-                                            <span>last updated Dec 26, 2022 02:37AM</span>
+                                    <div v-if="discussion.topics && discussion.topics.length > 0" class="topic-discussions-list">
+                                        <div v-for="(topic, index) in discussion.topics" :key="index" class="topic-discussion-item">
+                                            <div class="topic-name">
+                                                <router-link :to="'/community/group/discussion/folder/topic/detail/' + groupId + '&' + discussion.folderId + '&' + topic.topicId">{{ topic.name }}</router-link>
+                                            </div>
+                                            <div class="topic-info">
+                                                <span>By {{ topic.createdBy }} · {{ topic.comments ? topic.comments.length : '' }} posts · 755 views</span>
+                                                <span>last updated Dec 26, 2022 02:37AM</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="folder-discussion-item">
-                                <div class="header-folder-discussion-item">
-                                    <div class="folder-name">
-                                        <router-link to="/">Topic 1</router-link>
-                                    </div>
-                                </div>
-                                <div class="body-folder-discussion-item">
-                                    <div class="topic-discussion-item">
-                                        <div class="topic-name">
-                                            <router-link to="/">Reviews Mắt Biết</router-link>
-                                        </div>
-                                        <div class="topic-info">
-                                            <span>By Pam · 3 posts · 755 views</span>
-                                            <span>last updated Dec 26, 2022 02:37AM</span>
-                                        </div>
-                                    </div>
-                                    <div class="topic-discussion-item">
-                                        <div class="topic-name">
-                                            <router-link to="/">Your Reviews of Tôi Thấy Hoa Vàng Trên Cỏ Xanh</router-link>
-                                        </div>
-                                        <div class="topic-info">
-                                            <span>By Pam · 3 posts · 755 views</span>
-                                            <span>last updated Dec 26, 2022 02:37AM</span>
-                                        </div>
-                                    </div>
+                                    <p v-else>No discussions have been started in this group yet. <router-link :to="'/community/group/discussion/folder/topic/add/' + groupId + '&' + discussion.folderId">Start one now »</router-link></p>
                                 </div>
                             </div>
                         </div>
-                        <router-link class="more-discussion" to="/">More discussion...</router-link>
+                        <p v-else>No discussions have been started in this group yet. <router-link to="/">Start one now »</router-link></p>
+                        <router-link class="more-discussion" :to="'/community/group/discussion/' + groupId">More discussion...</router-link>
                     </div>
                     <div class="members-content">
-                        <h4>MEMBERS (2)</h4>
+                        <h4>MEMBERS ({{ group.members ? group.members.length : '' }})</h4>
                         <div class="members-list">
-                            <div class="member-item">
+                            <div v-for="(member, index) in group.members" :key="index" class="member-item">
                                 <img src="https://s.gr-assets.com/assets/nophoto/user/u_50x66-632230dc9882b4352d753eedf9396530.png" alt="">
-                                <router-link to="/">Trần Tính</router-link>
-                            </div>
-                            <div class="member-item">
-                                <img src="https://s.gr-assets.com/assets/nophoto/user/u_50x66-632230dc9882b4352d753eedf9396530.png" alt="">
-                                <router-link to="/">Trần Tính</router-link>
+                                <router-link to="/">{{ member.userId }}</router-link>
                             </div>
                         </div>
                         <router-link to="/" class="more-members">More members...</router-link>
@@ -159,12 +116,12 @@
                 </div>
                 <div class="body-content-container-2">
                     <div class="navigation-content">
-                        <router-link :to="'/community/group/detail/' + groupId">Group Home</router-link>
+                        <router-link class="active" :to="'/community/group/detail/' + groupId" >Group Home</router-link>
                         <router-link :to="'/community/group/bookshelf/' + groupId">Bookshelf</router-link>
                         <router-link :to="'/community/group/discussion/' + groupId">Discussion</router-link>
                         <router-link :to="'/community/group/member/' + groupId">Members</router-link>
                         <router-link :to="'/community/group/send-invite/' + groupId">Send invite</router-link>
-                        <router-link to="/">Setting</router-link>
+                        <router-link :to="'/community/group/setting/' + groupId">Setting</router-link>
                     </div>
                     <div class="my-navigation-content">
                         <router-link to="/">My Group Topics</router-link>
@@ -199,9 +156,58 @@
     </div>
 </template>
 <script>
+import AuthService from '../services/AuthService';
+import UserService from '../services/user.service';
+import GroupService from '../services/group.service'
 export default {
     props: {
         groupId: { type: String, default: ""}
+    },
+    data(){
+        return {
+            user: {},
+            group: {}
+        }
+    },
+    methods: {
+        async getUser(){
+            AuthService.checkAuthentication()
+            const email = AuthService.user.Email
+            this.user = await UserService.getUserByEmail(email);
+        },
+        async getGroup(){
+            this.group = await GroupService.getByGroupId(this.groupId)
+        },
+        checkIsMemberGroup(userId, group){
+            const check = group.members ? group.members.some(member => member.userId === userId) : true;
+            return check
+        },
+        async handleJoinGroup(userId){
+           try {
+                 const data = {
+                    userId: userId,
+                }
+                const updateMember = await GroupService.updateMember(this.groupId, data);
+                if (updateMember) {
+                    alert(updateMember.message)
+                    window.location.reload()
+                } else {
+                    alert('Please try again!')
+                }
+           } catch (error) {
+                console.log(error);
+                alert('Please try again!')
+           }
+            
+        },
+        checkJoinRequest(userId, group){
+            const check = group.joinRequests ? group.joinRequests.some(joinRequest => joinRequest.userId === userId) : false;
+            return check
+        }
+    },
+    mounted(){
+        this.getUser();
+        this.getGroup();
     }
 }
 </script>
@@ -244,11 +250,22 @@ export default {
         background: #fff;
         border-radius: 4px;
     }
-    .container-content-group {
-    }
     .header-content-group{
         padding: 16px 0 16px 152px;
         border-bottom: 1px solid #EBE8D5;
+    }
+    .join-group-content{
+        margin-top: 10px;
+        margin-left: 150px;
+    }
+    .join-group-content > button {
+        padding: 8px 12px;
+        color: #333333;
+        background-color: #F4F1EA;
+        cursor: pointer;
+        font-size: 14px;
+        border-radius: 3px;
+        border: 1px solid #D6D0C4;
     }
     .body-content-container{
         display: flex;
@@ -261,11 +278,11 @@ export default {
         width: 300px;
     }
     .description-content{
-        padding: 20px 0px 0px 100px;
+        padding: 20px 0px 0px 150px;
     }
     .group-info-content{
         font-size: 14px;
-        padding: 10px 0px 0px 100px;
+        padding: 10px 0px 0px 150px;
     }
     .group-info-content > p {
         font-weight: 600;
@@ -288,6 +305,9 @@ export default {
     .tags > div{
         color: #999;
         width: 100px;
+    }
+    .tags > p{
+        width: 400px;
     }
     .location {
         margin-bottom: 5px;
@@ -327,9 +347,13 @@ export default {
     .discussion-content {
         margin-top: 20px;
     }
-    .discussion-content > h5 {
+    .discussion-content > h4 {
         padding: 10px 0;
+        font-size: 14px;
         border-bottom: 1px solid #D8D8D8;
+    }
+    .discussion-content > p {
+        margin: 10px 0;
     }
     .folder-discussion-list{
         margin-bottom: 10px;
@@ -343,6 +367,9 @@ export default {
     }
     .body-folder-discussion-item{
         padding-left: 20px;
+    }
+    .body-folder-discussion-item > p {
+        margin-top: 10px;
     }
     .topic-discussion-item {
         padding: 5px 0;
@@ -384,6 +411,8 @@ export default {
     }
     .member-item > a{
         font-size: 14px;
+        display: block;
+        text-align: center;
     }
     .more-members{
         float: right;
@@ -432,6 +461,10 @@ export default {
         padding: 10px 0;
         gap: 5px;
         border-bottom: 1px solid #EBE8D5;
+    }
+    .active{
+        color: #333333;
+        font-weight: 600;
     }
     .my-navigation-content{
         display: grid;

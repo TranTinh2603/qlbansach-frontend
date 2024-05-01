@@ -19,6 +19,9 @@ class BookService {
     async getByBookId(id) {
         return (await this.api.get(`/find/${id}`)).data;
     }
+    async getByLiveSearch(searchText) {
+        return (await this.api.get(`/live-search/${searchText}`)).data;
+    }
     // async getByStatus(data) {
     //     return (await this.api.post("/find", data)).data;
     // }

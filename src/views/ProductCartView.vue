@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <div>
         <h3>Giỏ hàng ({{ totalProduct }} sản phẩm)</h3>
         <div class="row bg-white rounded-2 p-2 mb-2">
@@ -105,8 +105,6 @@ export default {
         },
         async placeOrder() {
             const selectedProducts = this.cart.filter((product) => product.selected);
-            console.log(selectedProducts);
-
             if (selectedProducts.length === 0) {
                 alert('Vui lòng chọn sản phẩm để đặt hàng.');
                 return;
@@ -212,4 +210,124 @@ export default {
 .quantity {
     width: 40px;
 }
+</style> -->
+
+
+<template>
+    <div class="cart">
+        <h2>Giỏ hàng</h2>
+        <div v-if="cartItems.length === 0">
+            <p>Giỏ hàng của bạn đang trống.</p>
+        </div>
+        <div v-else>
+            <div v-for="item in cartItems" :key="item.id" class="cart-item">
+                <img :src="item.product.image" :alt="item.product.name">
+                <div class="item-info">
+                    <h3>{{ item.product.name }}</h3>
+                    <p>Giá: {{ item.product.price }}</p>
+                    <p>Số lượng: {{ item.quantity }}</p>
+                    <p>Tổng: {{ totalUnitPrice(item.product.price, item.quantity) }}</p>
+                    <button @click="removeFromCart(item)">Xóa</button>
+                </div>
+                
+            </div>
+            <div class="total">
+                <p>Tổng số lượng: {{ totalQuantity }}</p>
+                <p>Tổng tiền: {{ totalPrice }}</p>
+            </div>
+            <button class="pay" @click="checkout">Thanh toán</button>
+        </div>
+    </div>
+</template>
+
+<script>
+// import CartService from '../services/cart.service';
+
+export default {
+    data() {
+        return {
+            cartItems: []
+        };
+    },
+    computed: {
+        totalQuantity() {
+            return this.cartItems.reduce((total, item) => total + item.quantity, 0);
+        },
+        totalPrice() {
+            return this.cartItems.reduce((total, item) => total + (item.product.price * item.quantity), 0).toFixed(3);
+        }
+    },
+    methods: {
+        // removeFromCart(item) {
+        //     CartService.removeFromCart(item);
+        //     this.cartItems = CartService.getCartItems();
+        // },
+        loadCartFromLocalStorage() {
+            const savedCart = localStorage.getItem('cart');
+            this.cartItems = savedCart ? JSON.parse(savedCart) : [];
+        },
+        checkout() {
+            alert('Chức năng thanh toán chưa được triển khai!');
+        },
+        totalUnitPrice(price, quantity){
+            return (quantity * price).toFixed(3)
+        }
+    },
+    mounted() {
+        this.loadCartFromLocalStorage();
+    }
+};
+</script>
+
+<style scoped>
+.cart {
+    margin: 20px 100px;
+}
+
+.cart h2 {
+    margin-bottom: 20px;
+}
+
+.cart-item {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.cart-item > img {
+    max-width: 100px;
+    margin-right: 20px;
+}
+
+.item-info > h3 {
+    margin-bottom: 5px;
+}
+
+.item-info > button {
+    padding: 5px 10px;
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.item-info > button:hover {
+    background-color: #c82333;
+}
+
+
+
+.total {
+    margin-top: 20px;
+}
+.pay{
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
 </style>
+

@@ -25,12 +25,11 @@ export default {
                 //     console.log(document);
                 //     alert(document.message ? document.message : 'Đăng kí thành công');
                 // } else {
-                    console.log(data);
                     const token = await LoginService.findByEmail(data);
                     console.log(token);
                     if (token !== '') {
+                        AuthService.setAuthentication(true, { email: data.email });
                         alert('Login successful');
-                        AuthService.setAuthentication(true, { Email: data.Email });
                         this.$router.push({ path: '/' });
                     }
                 // }
@@ -46,9 +45,10 @@ export default {
             try {
                 const register = await RegisterService.create(data);
                 if (!register.message) {
-                    console.log("thành công");
+                    alert('Register successful!')
+                    this.$router.push({ path: '/login' });
                 } else {
-                    console.log("thất bại");
+                    alert('Register failed!')
                 }
             } catch (error) {
                 

@@ -1,21 +1,21 @@
 <template>
     <div class="container">
         <div class="header-container-content">
-            <router-link :to="`/community/group/detail/` + groupId">{{ groupId }}</router-link>
+            <router-link :to="`/community/group/detail/` + groupId">{{ group.name }}</router-link>
             <i class="fa-solid fa-greater-than"></i>
             <p>Discussion</p>
         </div>
         <div class="body-container-content">
             <div class="container-content-1">
                 <div class="create-folder-content">
-                    <router-link to="/">New folder</router-link>
+                    <router-link :to="'/community/group/discussion/folder/add/' + groupId">New folder</router-link>
                 </div>
                 <div class="folders-list-content">
-                    <div class="folder-item">
+                    <div v-if="group.discussions && group.discussions.length > 0" v-for="(discussion, index) in group.discussions" :key="index" class="folder-item">
                         <div class="folder-name">
-                            <router-link to="/">Test</router-link>
+                            <router-link :to="'/community/group/discussion/folder/topic/' + groupId + '&' + discussion.folderId">{{ discussion.folderName }}</router-link>
                         </div>
-                        <div class="topics-list">
+                        <div v-if="discussion.topics && discussion.topics.length > 0" class="topics-list">
                             <div class="topic-item">
                                 <div class="topic-name">
                                     <router-link to="/">Review</router-link>
@@ -35,22 +35,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="folder-item">
-                        <div class="folder-name">
-                            <router-link to="/">Test</router-link>
-                        </div>
-                        <div class="topics-list">
-                            <div class="topic-item">
-                                <div class="topic-name">
-                                    <router-link to="/">Review</router-link>
-                                </div>
-                                <div class="topic-info">
-                                    <span>By Pam · 10 posts (10 new) · 1394 views</span>
-                                    <span>last updated Oct 31, 2023 02:32AM</span>
-                                </div>
-                            </div>
-                        </div>
+                        <p v-else>No discussions have been started in this group yet. <router-link :to="'/community/group/discussion/folder/topic/add/' + groupId + '&' + discussion.folderId">Start one now »</router-link></p>
                     </div>
                 </div>
             </div>
@@ -62,7 +47,7 @@
                 <div class="navigation-content">
                     <router-link :to="'/community/group/detail/' + groupId">Group Home</router-link>
                     <router-link :to="'/community/group/bookshelf/' + groupId">Bookshelf</router-link>
-                    <router-link :to="'/community/group/discussion/' + groupId">Discussion</router-link>
+                    <router-link class="active" :to="'/community/group/discussion/' + groupId">Discussion</router-link>
                     <router-link to="/">Members</router-link>
                     <router-link to="/">Send invite</router-link>
                 </div>
@@ -77,9 +62,41 @@
     </div>
 </template>
 <script>
+import AuthService from '../services/AuthService';
+import UserService from '../services/user.service';
+import GroupService from '../services/group.service';
 export default {
     props: {
         groupId: {type: String, default:""}
+    },
+    data(){
+        return {
+            user: {},
+            group: {},
+        }
+    },
+    methods: {
+       async getUser(){
+            try {
+                AuthService.checkAuthentication();
+                const email = AuthService.user.Email;
+                this.user = await UserService.getUserByEmail(email)
+            } catch (error) {
+                console.log(error);
+            }
+       },
+       async getGroup(){
+            try {
+                this.group = await GroupService.getByGroupId(this.groupId);
+                console.log(this.group);
+            } catch (error) {
+                console.log(error);
+            }
+       }
+    },
+    mounted(){
+        this.getUser()
+        this.getGroup()
     }
 }
 </script>
@@ -125,7 +142,8 @@ export default {
     .folders-list-content{
         margin-top: 10px;
     }
-    .folder-item{
+    .folder-item > p {
+        margin-top: 10px;
         margin-bottom: 10px;
     }
     .folder-name{
@@ -175,6 +193,10 @@ export default {
         padding: 5px 0;
         border-top: 5px solid #EBE8D5;
         border-bottom: 1px solid #EBE8D5;
+    }
+    .active{
+        color: #333333;
+        font-weight: 600;
     }
     .search-discussion-content{
         margin-top: 10px;

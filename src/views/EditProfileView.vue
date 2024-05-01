@@ -17,7 +17,7 @@
                     </div>
                     <div class="body-content-photo-avatar">
                         <router-link to="/">
-                            <img src="https://s.gr-assets.com/assets/nophoto/user/u_111x148-9394ebedbb3c6c218f64be9549657029.png" alt="">
+                            <img :src="user.image" alt="">
                         </router-link>
                         <br>
                         <input type="file">
@@ -32,7 +32,7 @@
                         <div class="field-first-name"> 
                             <label for="first-name">First Name <span>*</span></label>
                             <br>
-                            <input id="first-name" type="text">
+                            <input id="first-name" type="text" v-model="user.Name">
                         </div>
                         <div class="field-last-name"> 
                             <label for="last-name">Last Name <span>*</span></label>
@@ -92,6 +92,30 @@
     </div>
 </template>
 <script>
+import AuthService from '../services/AuthService';
+import UserService from '../services/user.service';
+export default {
+    data(){
+        return {
+            user: {},
+        }
+    },
+    methods: {
+        async getUser(){
+            try {
+                AuthService.checkAuthentication()
+                const email = AuthService.user.Email;
+                this.user = await UserService.getUserByEmail(email)
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    },
+    mounted(){
+        this.getUser()
+    }
+    
+}
 </script>
 <style scoped>
     a{

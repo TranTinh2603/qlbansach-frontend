@@ -31,8 +31,8 @@ class MyBookService {
     async update(userId, bookId, data) {
         return (await this.api.put(`/find/${userId}&${bookId}`, data)).data;
     }
-    // async delete(id) {
-    //     return (await this.api.delete(`/${id}`)).data;
-    // }
+    async delete(id) {
+        return (await this.api.delete(`/my-book/${id}`)).data;
+    }
 }
 export default new MyBookService();

@@ -12,6 +12,7 @@
                         <button class="active">All</button>
                         <button>Friends</button>
                         <button>Moderators</button>
+                        <button>Requests</button>
                     </div>
                     <div class="members-list-content">
                         <div class="member-item">

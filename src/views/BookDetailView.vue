@@ -82,7 +82,7 @@ export default {
     methods: {
         async getUser(){
             AuthService.checkAuthentication();
-            const email = AuthService.user.Email;
+            const email = AuthService.user.email;
             this.user = await UserService.getUserByEmail(email)
             this.getMyBookByUserIdAndBookId(this.user.userId);
             this.getReview(this.user.userId);
@@ -91,14 +91,17 @@ export default {
             this.myBook = await MyBookService.getByUserIdAndBookId(userId,this.id)
         },
         async setStatusBook(userId, status){
+            const date = new Date();
+            const timestamp = date.getTime();
+            const randomString = Math.random().toString(36).substring(5);
+            const result = randomString + '_' + timestamp;
             const data = {
                 userId: userId,
                 bookId: this.id,
                 status: status,
-                bookshelves: ''
+                bookshelves: '',
+                createdAt: timestamp
             }
-            const date = new Date();
-            const timestamp = date.getTime();
             const postData = {
                 userId: userId,
                 bookId: this.id,
@@ -109,7 +112,6 @@ export default {
             }
             const updateStatusBook = await MyBookService.update(data.userId, data.bookId, data);
             const createPost = await PostService.create(postData);
-            console.log(createPost);
             alert(updateStatusBook.message);
             location.reload();
         },
@@ -132,16 +134,21 @@ export default {
         },
         async setRating(userId, rating) {
             this.currentRating = rating;
+            const date = new Date();
+            const timestamp = date.getTime();
+            const randomString = Math.random().toString(36).substring(5);
+            const result = randomString + '_' + timestamp;
             const data = {
                 bookId: this.id,
                 userId: userId,
                 rating: this.currentRating,
                 review: "",
-                createdAt: new Date,
+                createdAt: timestamp,
+                reviewId: result
             }
             const message = await ReviewService.create(data);
             alert(message.message);
-            location.reload();
+            window.location.reload();
         },
         openModal() {
             this.showModal = true;
@@ -153,7 +160,7 @@ export default {
     },
     created(){
         this.getUser();
-      this.getBook();
+        this.getBook();
     }
 
 }

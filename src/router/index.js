@@ -66,44 +66,44 @@ const routes = [
         component: () => import("@/views/LoginView.vue"),
     },
     {
-        path: "/detail-shop/:id",
-        name: "product.detail-shop",
+        path: "/shop/product/detail/:bookId",
+        name: "shop.product.detail",
         component: () => import("@/views/ProductDetailView.vue"),
         props: true
     },
     {
-        path: "/cart-shopping",
-        name: "product.cart",
+        path: "/shop/cart",
+        name: "shop.cart",
         component: () => import("@/views/ProductCartView.vue")
     },
-    {
-        path: "/category/:categoryId",
-        name: "product.category",
-        component: () => import("@/views/ProductCategory.vue"),
-        props: true
-    },
-    {
-        path: "/customer/detail",
-        name: "customer.detail",
-        component: () => import("@/views/CustomerDetail.vue")
-    },
-    {
-        path: "/customer/edit/:id",
-        name: "customer.edit",
-        component: () => import("@/views/CustomerEdit.vue"),
-        props: true
-    },
-    {
-        path: "/customer/order/",
-        name: "customer.order",
-        component: () => import("@/views/CustomerOrder.vue")
-    },
-    {
-        path: "/customer/order/detail/:msdh",
-        name: "customer.order.detail",
-        component: () => import("@/views/OrderDetailView.vue"),
-        props: true
-    },
+    // {
+    //     path: "/category/:categoryId",
+    //     name: "product.category",
+    //     component: () => import("@/views/ProductCategory.vue"),
+    //     props: true
+    // },
+    // {
+    //     path: "/customer/detail",
+    //     name: "customer.detail",
+    //     component: () => import("@/views/CustomerDetail.vue")
+    // },
+    // {
+    //     path: "/customer/edit/:id",
+    //     name: "customer.edit",
+    //     component: () => import("@/views/CustomerEdit.vue"),
+    //     props: true
+    // },
+    // {
+    //     path: "/customer/order/",
+    //     name: "customer.order",
+    //     component: () => import("@/views/CustomerOrder.vue")
+    // },
+    // {
+    //     path: "/customer/order/detail/:msdh",
+    //     name: "customer.order.detail",
+    //     component: () => import("@/views/OrderDetailView.vue"),
+    //     props: true
+    // },
     {
         path: "/community/group/",
         name: "community.group",
@@ -133,6 +133,30 @@ const routes = [
         props: true
     },
     {
+        path: "/community/group/discussion/folder/add/:groupId",
+        name: "community.group.discussion.folder.add",
+        component: () => import("@/views/GroupDiscussionFolderAddView.vue"),
+        props: true
+    },
+    {
+        path: "/community/group/discussion/folder/topic/:groupId&:folderId",
+        name: "community.group.discussion.folder.topic",
+        component: () => import("@/views/GroupDiscussionTopicView.vue"),
+        props: true
+    },
+    {
+        path: "/community/group/discussion/folder/topic/add/:groupId&:folderId",
+        name: "community.group.discussion.folder.topic.add",
+        component: () => import("@/views/GroupDiscussionTopicAddView.vue"),
+        props: true
+    },
+    {
+        path: "/community/group/discussion/folder/topic/detail/:groupId&:folderId&:topicId",
+        name: "community.group.discussion.folder.topic.detail",
+        component: () => import("@/views/GroupDiscussionTopicDetailView.vue"),
+        props: true
+    },
+    {
         path: "/community/group/member/:groupId",
         name: "community.group.member",
         component: () => import("@/views/GroupMemberView.vue"),
@@ -142,6 +166,12 @@ const routes = [
         path: "/community/group/send-invite/:groupId",
         name: "community.group.send-invite",
         component: () => import("@/views/GroupSendInviteView.vue"),
+        props: true
+    },
+    {
+        path: "/community/group/setting/:groupId",
+        name: "community.group.setting",
+        component: () => import("@/views/GroupSettingView.vue"),
         props: true
     },
     {

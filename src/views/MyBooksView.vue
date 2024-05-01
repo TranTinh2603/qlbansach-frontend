@@ -64,22 +64,26 @@
                                         <p  @click="handleChangeStatusBook(user.userId, book.bookId, 'Currently Reading')"><i v-if="getMyBookByBookId(book.bookId).status === 'Currently Reading'" class="fa-solid fa-check"></i> Currently Reading</p>
                                         <p  @click="handleChangeStatusBook(user.userId, book.bookId, 'Want To Read')"><i v-if="getMyBookByBookId(book.bookId).status === 'Want To Read'" class="fa-solid fa-check"></i> Want To Read</p>
                                         <h4>Shelf</h4>
-                                        <p v-for="(shelf, index) in shelfs " @click="handleChangeBookshelves(user.userId, book.bookId, shelf.name)"><i v-if="getMyBookByBookId(book.bookId).bookshelves === shelf.name" class="fa-solid fa-check"></i> {{ shelf.name }}</p>
+                                        <p v-for="(shelf, index) in shelfs " :key="index" @click="handleChangeBookshelves(user.userId, book.bookId, shelf.name)"><i v-if="getMyBookByBookId(book.bookId).bookshelves === shelf.name" class="fa-solid fa-check"></i> {{ shelf.name }}</p>
                                     </div>
                                 </div>
                                 
                             </td>
                             <td>
-                                <div v-if="showEditReview === false">
+                                <div v-if="book.showEditReview === ''">
                                     <p>{{ getReviewByUserIdAndBookId(user.userId, book.bookId) ? getReviewByUserIdAndBookId(user.userId, book.bookId).review : '' }}</p>
-                                    <i style="font-size: 12px;" class="fa-solid fa-pen"></i>
+                                    <p @click="handleShowEditReview(book)" style="font-size: 12px; margin-top: 5px; cursor: pointer;">[Edit]</p>
                                 </div>
-                                <!-- <form @submit.prevent="handleEditReview(book.bookId)">
-                                    <textarea :name=book.bookId cols="30" rows="5" v-model="getReviewByUserIdAndBookId(user.userId, book.bookId).review"></textarea>
-                                    <input type="submit">
-                                </form> -->
+                                <form class="form-edit-review" v-if="book.showEditReview === book.bookId">
+                                    <textarea cols="30" rows="4" v-model="book.review"></textarea>  
+                                    <div>
+                                        <input @click="handleEditReview(user.userId, book)" type="submit" value="Post">
+                                        <p style="margin-left: 10px; cursor: pointer; font-size: 12px;" @click="handleShowEditReview(book)">Cancel</p>
+                                    </div>
+                                </form>
+                                
                             </td>
-                            <td><i class="fa-solid fa-xmark"></i></td>
+                            <td><i style="cursor: pointer;" @click="deleteMyBook(user.userId, book.bookId)" class="fa-solid fa-xmark"></i></td>
                         </tr>
                 </table>
                 <div class="pagination">
@@ -114,7 +118,6 @@ export default {
             shelfs:[],
             selectedShelf: '',
             selectedStatus: '',
-            showEditReview: false,
             contentReview: '',
             
         } 
@@ -131,11 +134,15 @@ export default {
     },
     methods: {
         async getUser(){
-            AuthService.checkAuthentication();
-            const email = AuthService.user.Email;
-            this.user = await UserService.getUserByEmail(email);
-            this.getMyBook(this.user.userId)
-            this.getBookshelvesByUserId(this.user.userId);
+            try {
+                AuthService.checkAuthentication();
+                const email = AuthService.user.email;
+                this.user = await UserService.getUserByEmail(email);
+                this.getMyBook(this.user.userId)
+                this.getBookshelvesByUserId(this.user.userId);
+            } catch (error) {
+                console.log(error);
+            }
         },
         async getMyBook(userId) {
             try {
@@ -152,7 +159,9 @@ export default {
             try {
                 const book = await BookService.getByBookId(id);
                 book["currentRating"] = 0;
-                book["showDropdownMenu"]= false,
+                book["showDropdownMenu"]= false
+                book["showEditReview"] = ''
+                book["review"] = ''
                 this.Book.push(book);
             } catch (error) {
                 console.error(error);
@@ -167,7 +176,11 @@ export default {
             }
         },
         async getBookshelvesByUserId(userId){
-            this.shelfs = await BookshelvesService.getByUserId(userId);
+            try {
+                this.shelfs = await BookshelvesService.getByUserId(userId);
+            } catch (error) {
+                
+            }
         },
         getReviewByUserIdAndBookId(userId, bookId) {
             return this.reviews.find(review => (review.bookId === bookId && review.userId === userId));
@@ -217,17 +230,23 @@ export default {
             book.currentRating = this.rating; 
         },
         async setRating(rating, userId, book) {
-            book.currentRating = rating;
-            const data = {
-                bookId: book.bookId,
-                userId: userId,
-                rating: book.currentRating,
-                review: "",
-                createdAt: new Date,
-            }
-            const message = await ReviewService.create(data);
-            alert(message.message);
-            location.reload();
+           try {
+                book.currentRating = rating;
+                const date = new Date()
+                const timestamp = date.getTime();
+                const data = {
+                    bookId: book.bookId,
+                    userId: userId,
+                    rating: book.currentRating,
+                    review: "",
+                    createdAt: timestamp,
+                }
+                const message = await ReviewService.create(data);
+                alert(message.message);
+                location.reload();
+           } catch (error) {
+            
+           }
         },
          prevPage() {
             if (this.currentPage > 1) {
@@ -243,18 +262,27 @@ export default {
             this.addShelf = !this.addShelf;
         },
         async handleAddShelf(){
-            console.log(this.user.userId);
-            console.log(this.shelfName);
-            const currentTime = new Date().getTime().toString();
-            const randomString = Math.random().toString(36).substring(2, 8);
-            const randomId = currentTime + randomString;
-            const data = {
-                userId: this.user.userId,
-                name: this.shelfName,
-                bookshelvesId: randomId
+            try {
+                const currentTime = new Date().getTime().toString();
+                const randomString = Math.random().toString(36).substring(2, 8);
+                const randomId = currentTime + randomString;
+                const timestamp = new Date().getTime();
+                const data = {
+                    userId: this.user.userId,
+                    name: this.shelfName,
+                    bookshelvesId: randomId,
+                    createdAt: timestamp
+                }
+                const addShelf = await BookshelvesService.create(data);
+                if (addShelf) {
+                    alert("AddShelf successfully!")
+                    window.location.reload();
+                } else {
+                    alert("AddShelf failed!")
+                }
+            } catch (error) {
+                console.log(error);
             }
-            const addShelf = await BookshelvesService.create(data);
-            console.log(addShelf);
         },
         goToDetailBook(bookId){
             this.$router.push({name: "book.detail", params:{id: bookId}})
@@ -266,31 +294,88 @@ export default {
             book.showDropdownMenu = !book.showDropdownMenu;
         },
         async handleChangeStatusBook(userId, bookId, status){
-            const myBook = this.getMyBookByBookId(bookId)
-            const data = {
-                userId: userId,
-                bookId: bookId,
-                bookshelves: myBook.bookshelves,
-                status: status
+            try {
+                const date = new Date()
+                const timestamp = date.getTime()
+                const myBook = this.getMyBookByBookId(bookId)
+                const data = {
+                    userId: userId,
+                    bookId: bookId,
+                    bookshelves: myBook.bookshelves,
+                    status: status,
+                    createdAt: timestamp
+                }
+                const update = await MyBookService.update(userId, bookId, data)
+                alert(update.message);
+                window.location.reload();
+                console.log('data:', update);
+            } catch (error) {
+                console.log(error);
             }
-            const update = await MyBookService.update(userId, bookId, data)
-            alert(update.message);
-            window.location.reload();
-            console.log('data:', update);
         },
         async handleChangeBookshelves(userId, bookId, bookshelves) {
-            const myBook = this.getMyBookByBookId(bookId)
-            const data = {
-                userId: userId,
-                bookId: bookId,
-                bookshelves: bookshelves,
-                status: myBook.status
+            try {
+                const date = new Date()
+                const timestamp = date.getTime()
+                const myBook = this.getMyBookByBookId(bookId)
+                const data = {
+                    userId: userId,
+                    bookId: bookId,
+                    bookshelves: bookshelves,
+                    status: myBook.status,
+                    createdAt: timestamp
+                }
+                const update = await MyBookService.update(userId, bookId, data)
+                alert(update.message);
+                window.location.reload();
+            } catch (error) {
+                console.log(error);
             }
-            const update = await MyBookService.update(userId, bookId, data)
-            alert(update.message);
-            window.location.reload();
-            console.log('data:', update);
         },
+        async handleEditReview(userId, book){
+            try {
+                const date = new Date()
+                const timestamp = date.getTime()
+                const randomString = Math.random().toString(36).substring(5);
+                const result = randomString + '_' + timestamp;
+                const review = this.reviews.find(review => review.userId == userId && review.bookId == book.bookId)
+                if (review) {
+                    const data = {
+                        reviewId: review.reviewId,
+                        bookId: book.bookId,
+                        userId: userId,
+                        rating: review.rating,
+                        review: book.review,
+                        createdAt: timestamp
+                    }
+                    const updateReview = await ReviewService.updateReview(review.reviewId, data);
+                    if (updateReview) {
+                        alert("Review updated successfully!")
+                        window.location.reload();
+                    } else {
+                        alert("Review not updated successfully!")
+                    }
+                } else {
+                    alert('Please rating the book!')
+                    book.showEditReview = '';
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        handleShowEditReview(book){
+            book.showEditReview = book.showEditReview === book.bookId ? '' : book.bookId
+        },
+        async deleteMyBook(userId, bookId){
+            const confirmDelete = confirm("Do you want delete book ?"); 
+            const book = this.myBook.find(book => book.userId === userId && book.bookId === bookId);
+            if (confirmDelete) {
+                const deleteMyBook = await MyBookService.delete(book._id)
+                window.location.reload();
+            } else {
+                console.log(2);
+            }
+        }
     },
     mounted() {
         this.getUser();
@@ -307,15 +392,14 @@ export default {
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 8px 0;
-    z-index: 100;
-    width: 150px; /* Adjust width as needed */
+    width: 150px;
+    z-index: 2; /* Adjust width as needed */
 }
 
 .dropdown-menu p {
     color: #333333;
     padding: 8px 16px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
 }
 
 .dropdown-menu p:hover {
@@ -461,4 +545,40 @@ export default {
         width: 850px;
         height: 1000px;
     }
+    .form-edit-review > textarea{
+        background: #FFFFFF;
+        border-radius: 3px;
+        border: #DCD6CC 1px solid;
+        color: #333333;
+        padding: 5px;
+        font-size: 14px;
+        font-family: 'Times New Roman', Times, serif;
+    }
+    .form-edit-review > textarea:focus{
+        box-shadow: 0 0 4px rgba(185, 173, 153, 0.5);
+        border-color: #B9AD99;
+        outline: 0px;
+    }
+    .form-edit-review > div {
+        align-items: center;
+        display: flex;
+    }
+    .form-edit-review > div > input{
+        border-radius: 3px;
+        border: 1px solid #D6D0C4;
+        text-decoration: none;
+        color: #333333;
+        background-color: #F4F1EA;
+        font-size: 12px;
+        padding: 3px 12px;
+        font-family: 'Times New Roman', Times, serif;
+        cursor: pointer;
+    }
+
+
+    .form-edit-review > div > input:hover{
+        color: #333333;
+        background-color: #ede6d6;
+    }
+
 </style>

@@ -1,88 +1,4 @@
 <template>
-    <!-- <div class="header">
-        <div class="banner-header">
-            <router-link to="/">
-                <img class="image-banner" src="https://cdn0.fahasa.com/media/wysiwyg/Thang-11-2023/NCCDinhTiT1131_Header_1263x60.jpg" alt="">
-            </router-link>
-        </div>
-        <div class="nav-header">
-            <div class="nav-logo">
-                <a href="/">Ứng dụng Quản lý bán sách</a>
-            </div>
-            <div class="col-sm-10">
-                <div class="row">
-                    <div class="dropdown col-1 d-flex align-items-center">
-                            <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fa-solid fa-bars me-2"></i>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <div class="text-center">
-                                    <router-link :to="{ name: 'product' }" class="nav-link">
-                                        Trang chủ
-                                    </router-link>
-                                </div>
-                                <hr class="m-2">
-                                <li class="text-center">
-                                    <router-link :to="{ name: 'product' }" class="nav-link">
-                                        Giới thiệu
-                                    </router-link>
-                                </li>
-                                <hr class="m-2">
-                                <li class="text-center">
-                                    <router-link :to="{ name: 'customer.detail' }" class="nav-link">
-                                        Thông tin tài khoản
-                                    </router-link>
-                                </li>
-                                <hr class="m-2">
-                                <li class="text-center">
-                                    <router-link :to="{ name: 'customer.order' }" class="nav-link">
-                                        Thông tin đơn hàng
-                                    </router-link>
-                                </li>
-                            </ul>
-                        </div> 
-                    <div class="col-7 d-flex align-items-center search">
-                        <InputSearch v-model="searchText" @submit="search"/>
-                        <ul v-if="searchResults.length > 0" class="list-group mt-2">
-                            <li 
-                                v-for="(result, index) in searchResults"
-                                :key="index"
-                                class="list-group-item"
-                                @click="gotoDetail(result._id)"
-                            >
-                                {{ result.TenHH
-                                 }}
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="col-4">
-                        <div class="d-flex justify-content-center">
-                            <div class="me-3">
-                                <button v-on:click="notifycation()">
-                                    <i class="fa-regular fa-bell"></i>
-                                    <p class="m-0">Thông báo</p>
-                                </button>
-                            </div>
-                            <div class="me-3">
-                                <button v-on:click="shoppingCart()">
-                                    <i class="fa-solid fa-cart-shopping"></i>
-                                    <p class="m-0">Giỏ hàng</p>
-                                </button>
-                            </div>
-                            <div class="me-3">
-                                <button v-on:click="login()">
-                                    <i class="fa-regular fa-user"></i>
-                                    <p class="m-0">{{ isAuthenticated ?  'Đăng xuất' : 'Đăng nhập' }}</p>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> -->
-
-
     <div class="header">
         <div class="container">
             <div>
@@ -91,17 +7,17 @@
             </div>
             <div class="navigation">
                     <router-link class="nav-link" to="/">
-                        <i id="icon-nav" class="fa-solid fa-house"></i> 
+                        <i id="icon-nav" class="fa-solid fa-house"></i>
                         <p>Home</p>
                     </router-link>
                     <router-link class="nav-link" to="/my-books">
                         <i id="icon-nav" class="fa-solid fa-book-open"></i>
                         <p>My Books</p>
                     </router-link>
-                    <!-- <router-link class="nav-link" to="/shop">
+                    <a class="nav-link" href="/shop">
                         <i id="icon-nav" class="fa-solid fa-shop"></i>
                         <p>Shop</p>
-                    </router-link> -->
+                    </a>
                 
                 <div class="dropdown" @click="toggleDropdown('categorys')">
                     <p class="dropdown-toggle">Categorys <i class="fa-solid fa-sort-down" id="icon-down"></i></p>
@@ -208,13 +124,13 @@
                         <i class="fa-solid fa-user"></i>
                     </div>
                     <ul v-if="activeDropdown === 'user'" class="dropdown-menu-user">
-                        <h4>{{ user.Name }}</h4>
+                        <h4>{{ user.fristName + ' ' + user.lastName}}</h4>
                         <li><router-link to="/user/profile">Profile</router-link></li>
                         <li><router-link to="/user/friends">Friends</router-link></li>
                         <li><router-link to="/user/groups">Groups</router-link></li>
                         <li><router-link to="/user/account-setting">Account Settings</router-link></li>
                         <li><router-link to="/user/help">Help</router-link></li>
-                        <li><div>Sign out</div></li>
+                        <li><div @click="signOut()">Sign out</div></li>
                     </ul>
                 </div>
             </div>
@@ -254,7 +170,7 @@ export default {
     methods: {
         async getUser(){
             AuthService.checkAuthentication();
-            const email = AuthService.user.Email;
+            const email = AuthService.user.email;
             this.user = await UserService.getUserByEmail(email)
         },
 
@@ -306,6 +222,11 @@ export default {
         },
         hideDropdown() {
             this.activeDropdown = null;
+        },
+        signOut(){
+            AuthService.clearAuthentication();
+            alert('Sign out successfully!')
+            this.$router.push({ name: "login"})
         }
 
     },
@@ -330,15 +251,19 @@ export default {
         list-style: none;
         cursor: pointer;
     }
-
-    .header{
-        background-color: #f4f1ea;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    .header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1;
     }
+
     .container{
         display: flex;
         justify-content: space-around;
         align-items: center;
+        background-color: #f4f1ea;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.15);
     }
 
     .navigation{
@@ -512,9 +437,6 @@ export default {
     line-height: 13px;
 }
 
-.search-message {
-
-}
 
 .search-message > input {
     border: none;

@@ -11,9 +11,9 @@
             <div class="info-posts">
                 <img src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1495635816i/32521178._UX96_CR0,22,96,96_.jpg" alt="">
                 <div class="detail-info-posts">
-                    <router-link class="user-posts" to="/a">{{ getInFoUserPost(post.userId) ? getInFoUserPost(post.userId).Name : ''}}</router-link>
+                    <router-link class="user-posts" to="/a">{{ getInFoUserPost(post.userId) ? getInFoUserPost(post.userId).firstName + ' ' +  getInFoUserPost(post.userId).lastName : ''}}</router-link>
                     <span style="text-transform: lowercase;">{{' ' + post.content }}</span>
-                    <p class="time-posts">23 phút</p>
+                    <p class="time-posts">{{ getDifference(post.createdAt) }}</p>
                 </div>
             </div>
             <div class="content-post">
@@ -36,9 +36,9 @@
                                     <i v-if="checkStatusBook(post.bookId) && checkStatusBook(post.bookId).status && checkStatusBook(post.bookId).status === 'Want To Read'" class="fa-solid fa-check"></i>
                                     <span>Want To Read</span>
                                 </div>
-                                <div @click="handleUpdateMyBook(user.userId, post.bookId, 'Current Reading')" class="dropdown-item">
-                                    <i  v-if="checkStatusBook(post.bookId) && checkStatusBook(post.bookId).status && checkStatusBook(post.bookId).status === 'Current Reading'" class="fa-solid fa-check"></i>
-                                    <span>Current Reading</span>
+                                <div @click="handleUpdateMyBook(user.userId, post.bookId, 'Currently Reading')" class="dropdown-item">
+                                    <i  v-if="checkStatusBook(post.bookId) && checkStatusBook(post.bookId).status && checkStatusBook(post.bookId).status === 'Currently Reading'" class="fa-solid fa-check"></i>
+                                    <span>Currently Reading</span>
                                 </div>
                                 <div @click="handleUpdateMyBook(user.userId, post.bookId, 'Read')" class="dropdown-item">
                                     <i  v-if="checkStatusBook(post.bookId) && checkStatusBook(post.bookId).status && checkStatusBook(post.bookId).status === 'Read'" class="fa-solid fa-check"></i>
@@ -70,29 +70,35 @@
                         <i :class="(checkLikePost(post, user.userId) ? 'fa-solid' :'fa-regular') + ' fa-heart'"></i>
                         <p>Like</p>
                     </div>
-                    <div class="interact-way-comment">
+                    <div @click="showModal(index)" class="interact-way-comment">
                         <i class="fa-regular fa-comment"></i>
                         <p>Bình luận</p>
                     </div>
                 </div>
-                <p v-if="post.comments.length > 0" class="view-more-comment">Xem thêm bình luận</p>
+                <p @click="showModal(index)" v-if="post.comments.length > 0" class="view-more-comment">Xem thêm bình luận</p>
                 <div v-if="post.comments.length > 0" class="comment">
                     <div v-for="(comment, index) in post.comments" :key="index">
                         <div class="content-detail-comment">
                             <img src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1545314990i/10433999._SY180_.jpg" alt="">
                             <div class="detail-comment">
                                 <div class="info-user-comment">
-                                    <p class="name-user">{{ comment.userId }}</p>
+                                    <p class="name-user">{{  findUserCommetByUserId(comment.userId, userComments) ?  findUserCommetByUserId(comment.userId, userComments).fristName + ' ' + findUserCommetByUserId(comment.userId, userComments).lastName : ''}}</p>
                                     <p>{{ comment.content }}</p>
                                 </div>
                                 <div class="interact-comment">
-                                    <p>10 giờ</p>
-                                    <p>Thích</p>
+                                    <p>{{ getDifference(comment.createdAt) }}</p>
+                                    <p @click="updateLikeComment(user.userId, comment.commentId, post)">{{ comment.likes.length }} Thích</p>
                                     <p @click="showFormReply(index)" >{{ comment.replys.length }} Phản hồi</p>
-                                    <div class="option-comment">
-                                        <div></div>
-                                        <div></div>
-                                        <div></div>
+                                    <div @click="handleShowCommentOption(comment.commentId)" class="option-comment">
+                                        <div>
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                        </div>
+                                        <div v-if="showCommentOption === comment.commentId" class="menu-option-comment">
+                                            <p v-if="post.userId === user.userId || comment.userId === user.userId" @click="deleteComment(post._id, comment.commentId)">Xóa bình luận</p>
+                                            <p>Báo cáo</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -111,18 +117,172 @@
                             <img src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1545314990i/10433999._SY180_.jpg" alt="">
                             <div class="detail-comment-reply">
                                 <div class="info-user-comment-reply">
-                                    <p class="name-user">{{ reply.userId }}</p>
+                                    <p class="name-user">{{ findUserCommetByUserId(comment.userId, userComments) ? findUserCommetByUserId(reply.userId, userComments).fristName + ' ' + findUserCommetByUserId(reply.userId, userComments).lastName : '' }}</p>
                                     <p>{{ reply.content }}</p>
                                 </div>
                                 <div class="interact-comment-reply">
-                                    <p>10 giờ</p>
-                                    <p>Thích</p>
-                                    <div class="option-comment-reply">
-                                        <div></div>
-                                        <div></div>
-                                        <div></div>
+                                    <p>{{ getDifference(reply.createdAt) }}</p>
+                                    <div @click="handleShowCommentOption(reply.replyId)" class="option-comment-reply">
+                                        <div>
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                        </div>
+                                        <div v-if="showCommentOption === reply.replyId" class="menu-option-comment">
+                                            <p v-if="post.userId === user.userId || comment.userId === user.userId || reply.userId === user.userId" @click="deleteReplyComment(post._id, comment.commentId, reply.replyId)">Xóa bình luận</p>
+                                            <p>Báo cáo</p>
+                                        </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div v-if="show === index" class="modal">
+                        <div class="modal-content">
+                            <div class="header-modal">
+                                <strong>Post By {{ getInFoUserPost(post.userId) ? getInFoUserPost(post.userId).firstName + ' ' + getInFoUserPost(post.userId).lastName : '' }}</strong>
+                                <span class="close" @click="showModal(null)" ><i class="fa-solid fa-xmark"></i></span>
+                            </div>
+                            <div class="body-modal">
+                                <div class="info-posts">
+                                    <img src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1495635816i/32521178._UX96_CR0,22,96,96_.jpg" alt="">
+                                    <div class="detail-info-posts">
+                                        <router-link class="user-posts" to="/a">{{ getInFoUserPost(post.userId) ? getInFoUserPost(post.userId).firstName + ' ' + getInFoUserPost(post.userId).lastName : '' }}</router-link>
+                                        <span style="text-transform: lowercase;">{{ ' ' + post.content }}</span>
+                                        <p class="time-posts">{{ getDifference(post.createdAt) }}</p>
+                                    </div>
+                                </div>
+                                <div class="content-post">
+                                    <img :src="getBookByBookId(post.bookId) ? getBookByBookId(post.bookId).image : ''" alt="">
+                                    <div class="info-book">
+                                        <router-link :to="'/book/detail/' + post.bookId" class="name-book">{{ getBookByBookId(post.bookId) ? getBookByBookId(post.bookId).name : '' }}</router-link>
+                                        <div class="author-book">
+                                            <span >by </span>
+                                            <router-link class="author-name" :to="getBookByBookId(post.bookId) && getBookByBookId(post.bookId).author ? '/author/detail/' + getBookByBookId(post.bookId).author : ''">{{ getBookByBookId(post.bookId) ? getBookByBookId(post.bookId).author : '' }}</router-link>
+                                        </div>
+                                        <div :class="'status-book' + (checkStatusBook(post.bookId) ? '' : ' status-none')">
+                                            <div class="status-name">
+                                                <i v-if="checkStatusBook(post.bookId)" class="fa-solid fa-check"></i>
+                                                <p @click="checkStatusBook(post.bookId) ? '' : handleAddMyBook(post.bookId, user.userId)">{{ checkStatusBook(post.bookId) ? checkStatusBook(post.bookId).status : "Want To Read" }}</p>
+                                            </div>
+                                            <div class="status-change" @click="toggleDropdown(index)">
+                                                <i class="fa-solid fa-caret-down"></i>
+                                                <div v-show="dropdownMenu === index" class="dropdown-menu">
+                                                    <div @click="handleUpdateMyBook(user.userId, post.bookId, 'Want To Read')" class="dropdown-item">
+                                                        <i v-if="checkStatusBook(post.bookId) && checkStatusBook(post.bookId).status && checkStatusBook(post.bookId).status === 'Want To Read'" class="fa-solid fa-check"></i>
+                                                        <span>Want To Read</span>
+                                                    </div>
+                                                    <div @click="handleUpdateMyBook(user.userId, post.bookId, 'Currently Reading')" class="dropdown-item">
+                                                        <i  v-if="checkStatusBook(post.bookId) && checkStatusBook(post.bookId).status && checkStatusBook(post.bookId).status === 'Currently Reading'" class="fa-solid fa-check"></i>
+                                                        <span>Currently Reading</span>
+                                                    </div>
+                                                    <div @click="handleUpdateMyBook(user.userId, post.bookId, 'Read')" class="dropdown-item">
+                                                        <i  v-if="checkStatusBook(post.bookId) && checkStatusBook(post.bookId).status && checkStatusBook(post.bookId).status === 'Read'" class="fa-solid fa-check"></i>
+                                                        <span>Read</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="description">
+                                            <p>
+                                            {{ getBookByBookId(post.bookId) ? getBookByBookId(post.bookId).description : '' }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="interact-number">
+                                    <div class="number-like">
+                                        <i class="fa-solid fa-heart"></i>
+                                        <p>{{ post.likes.length }}</p>
+                                    </div>
+                                    <div class="number-comment">
+                                        <i class="fa-solid fa-comment"></i>
+                                        <p>{{ post.comments.length }}</p>
+                                    </div>
+                                </div>
+                                <div class="interact-way">
+                                    <div class="interact-way-like" @click="handleLikePost(post, user.userId)">
+                                        <i :class="(checkLikePost(post, user.userId) ? 'fa-solid' : 'fa-regular') + ' fa-heart'"></i>
+                                        <p>Like</p>
+                                    </div>
+                                    <div class="interact-way-comment">
+                                        <i class="fa-regular fa-comment"></i>
+                                        <p>Bình luận</p>
+                                    </div>
+                                </div>
+                                <div v-if="post.comments.length > 0" class="modal-comment">
+                                    <div v-for="(comment, index) in post.comments" :key="index">
+                                        <div class="content-detail-comment">
+                                            <img src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1545314990i/10433999._SY180_.jpg" alt="">
+                                            <div class="detail-comment">
+                                                <div class="info-user-comment">
+                                                    <p class="name-user">{{ findUserCommetByUserId(comment.userId, userComments).fristName + ' ' + findUserCommetByUserId(comment.userId, userComments).lastName }}</p>
+                                                    <p>{{ comment.content }}</p>
+                                                </div>
+                                                <div class="interact-comment">
+                                                    <p>{{ getDifference(comment.createdAt) }}</p>
+                                                    <p @click="updateLikeComment(user.userId, comment.commentId, post)">{{ comment.likes.length }} Thích</p>
+                                                    <p @click="showFormReply(index)" >{{ comment.replys.length }} Phản hồi</p>
+                                                    <div @click="handleShowCommentOption(comment.commentId)" class="option-comment">
+                                                        <div>
+                                                            <div></div>
+                                                            <div></div>
+                                                            <div></div>
+                                                        </div>
+                                                        <div v-if="showCommentOption === comment.commentId" class="menu-option-comment">
+                                                            <p v-if="post.userId === user.userId || comment.userId === user.userId" @click="deleteComment(post._id, comment.commentId)">Xóa bình luận</p>
+                                                            <p>Báo cáo</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="content-write-reply-comment" v-show="formReply === index">
+                                            <img style="width: 20px; height: 20px; margin-top: 3px; margin-right: 5px;" src="../../arrow-turn-down-right-svgrepo-com.svg" alt="">
+                                            <form @submit.prevent="addReplyComment(post, comment, user.userId, replyCommentText)" class="form-write-reply-comment">
+                                                <input type="text" placeholder="Viết bình luận" v-model="replyCommentText">
+                                                <button>
+                                                    <i class="fa-solid fa-paper-plane"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                        <div v-for="(reply, index) in comment.replys" class="content-detail-comment-reply" :key="index">
+                                            <img style="width: 20px; height: 20px; margin-top: 3px; margin-right: 5px;" src="../../arrow-turn-down-right-svgrepo-com.svg" alt="">
+                                            <img src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1545314990i/10433999._SY180_.jpg" alt="">
+                                            <div class="detail-comment-reply">
+                                                <div class="info-user-comment-reply">
+                                                    <p class="name-user">{{ findUserCommetByUserId(reply.userId, userComments).fristName + ' ' + findUserCommetByUserId(reply.userId, userComments).lastName }}</p>
+                                                    <p>{{ reply.content }}</p>
+                                                </div>
+                                                <div class="interact-comment-reply">
+                                                    <p>{{ getDifference(reply.createdAt) }}</p>
+                                                    <div @click="handleShowCommentOption(reply.replyId)" class="option-comment-reply">
+                                                        <div>
+                                                            <div></div>
+                                                            <div></div>
+                                                            <div></div>
+                                                        </div>
+                                                        <div v-if="showCommentOption === reply.replyId" class="menu-option-comment">
+                                                            <p v-if="post.userId === user.userId || comment.userId === user.userId || reply.userId === user.userId"  @click="deleteReplyComment(post._id, comment.commentId, reply.replyId)" >Xóa bình luận</p>
+                                                            <p>Báo cáo</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="write-comment">
+                                <img src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1545314990i/10433999._SY180_.jpg" alt="">
+                                <form @submit.prevent="addComment(post, user.userId)" class="content-write-comment">
+                                    <input type="text" placeholder="Viết bình luận" v-model="post.commentText">
+                                    <button>
+                                        <i class="fa-solid fa-paper-plane"></i>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -156,16 +316,19 @@ export default {
             myBook: [],
             dropdownMenu: null,
             formReply: null,
-            replyCommentText: ''
+            replyCommentText: '',
+            show: null,
+            userComments: [],
+            showCommentOption: null,
         }
     },
     methods: {
         async getUser(){
             AuthService.checkAuthentication();
-            const email = AuthService.user.Email;
+            const email = AuthService.user.email;
             this.user = await UserService.getUserByEmail(email)
-            this.getPostByUserId(this.user.Friends)
-            this.getUserPostByUserId(this.user.Friends)
+            this.getPostByUserId(this.user.friends)
+            this.getUserPostByUserId(this.user.friends)
             this.getMyBook(this.user.userId)
         },
         async getMyBook(userId){
@@ -193,6 +356,27 @@ export default {
             this.posts = [].concat(...postsLocal)
             this.sortPost()
             this.getBook(this.posts)
+            this.getUserCommentByUserId(this.posts)
+        },
+        async getUserCommentByUserId(posts){
+            for (const post of posts) {
+                for (const comment of post.comments){
+                    const check = this.userComments.some(userComment => userComment.userId === comment.userId)
+                    if (check === false) {
+                        this.userComments.push(await UserService.get(comment.userId))
+                    }
+                    for (const reply of comment.replys){
+                        const check1 = this.userComments.some(userComment => userComment.userId === reply.userId)
+                        if (check1 === false) {
+                            this.userComments.push(await UserService.get(reply.userId))
+                        }
+                    }
+                }
+            }
+        },
+        findUserCommetByUserId(userId, userComments){
+            const userComment = userComments.find(userComment => userComment.userId === userId);
+            return userComment
         },
         sortPost(){
             return this.posts.sort((a, b) => b.createdAt - a.createdAt);
@@ -208,7 +392,6 @@ export default {
         },
 
         toggleDropdown(index) {
-            // Toggle trạng thái hiển thị của dropdown menu cho bài viết được click
             this.dropdownMenu = this.dropdownMenu === index ? null : index;
         },
         async handleAddMyBook(bookId, userId) {
@@ -219,7 +402,8 @@ export default {
                     userId: userId,
                     bookId: bookId,
                     status: 'Want To Read',
-                    bookshelves: ''
+                    bookshelves: '',
+                    createdAt: timestamp
                 }
                 const dataPost = {
                     userId: userId,
@@ -245,11 +429,14 @@ export default {
         },
         async handleUpdateMyBook(userId, bookId, status) {
             try {
+                const date = new Date()
+                const timestamp = date.getTime();
                 const data = {
                     userId: userId,
                     bookId: bookId,
                     status: status,
-                    bookshelves: ''
+                    bookshelves: '',
+                    createdAt: timestamp
                 }
                 const update = await MyBookService.update(userId, bookId, data);
                 if (update) {
@@ -268,10 +455,7 @@ export default {
          async handleLikePost(post, userId) {
 
             try {
-                 // Kiểm tra xem bài viết đã được người dùng thích chưa
                 const liked = this.checkLikePost(post, userId);
-
-                // Nếu đã thích, hủy thích bài viết; nếu chưa, thêm vào danh sách thích
                 if (liked) {
                     const index = post.likes.indexOf(userId);
                     if (index !== -1) {
@@ -285,7 +469,6 @@ export default {
                 const data = {
                     userId: userId,
                 }
-                // Cập nhật bài viết sau khi thích
                const update = await PostService.update(post._id, data)
                console.log(update);
             } catch (error) {
@@ -297,7 +480,10 @@ export default {
             try {
                 const date = new Date();
                 const timestamp = date.getTime();
+                const randomString = Math.random().toString(36).substring(5);
+                const result = randomString + '_' + timestamp;
                 const data = {
+                    commentId: result,
                     userId: userId,
                     content: post.commentText,
                     createdAt: timestamp,
@@ -317,7 +503,10 @@ export default {
         async addReplyComment(post, comment, userId, replyCommentText){
             const date = new Date();
             const timestamp = date.getTime();
+             const randomString = Math.random().toString(36).substring(5);
+            const result = randomString + '_' + timestamp;
             const data = {
+                replyId: result,
                 userId: userId,
                 content: replyCommentText,
                 likes: [],
@@ -326,7 +515,79 @@ export default {
             comment.replys.push(data);
             const updateReply = await PostService.updateReplyComment(post._id, comment.userId, comment.createdAt, data);
             this.replyCommentText = '';
-            console.log(updateReply);
+            this.formReply = null
+        },
+        getDifference(createdAt) {
+            const date = new Date();
+            const timestamp = date.getTime();
+            var timeDifference = Math.abs(timestamp - createdAt); 
+            var milliseconds = timeDifference % 1000;
+            timeDifference = (timeDifference - milliseconds) / 1000;
+            var seconds = timeDifference % 60;
+            timeDifference = (timeDifference - seconds) / 60;
+            var minutes = timeDifference % 60;
+            timeDifference = (timeDifference - minutes) / 60;
+            var hours = timeDifference % 24;
+            var days = (timeDifference - hours) / 24;
+           if (days > 0) {
+            if (days > 30) {
+                return 'than 1 month ago';
+            }else{
+                return days + ' day ago'
+            }
+           } else if (hours > 0) {
+            return hours + ' hour ago'
+           } else if (minutes > 0) {
+            return minutes + ' minute ago'
+           } else if (seconds > 0) {
+            return seconds + ' second ago'
+           } else {
+            return 'Vừa xong'
+           }
+        },
+        async updateLikeComment(userId, commentId, post){
+           try {
+                const comment = post.comments.find(comment => comment.commentId === commentId)
+                const check = comment.likes.indexOf(userId)
+                console.log(check);
+                if (check >= 0){
+                    console.log(check);
+                    comment.likes.splice(check, 1)
+                } else {
+                    comment.likes.push(userId)
+                }
+                const data = {
+                    userId: userId,
+                }
+                const updateLikeComment = await PostService.updateLikeComment(post._id, commentId, data)
+           } catch (error) {
+                console.log(error);
+           }
+
+        },
+        showModal(index) {
+            this.show = index;
+        },
+        handleShowCommentOption(index){
+            this.showCommentOption = this.showCommentOption === index ? null : index
+        },
+        async deleteComment(postId, commentId){
+            const post = this.posts.find(post => post._id === postId);
+            const comment = post.comments.findIndex(comment => comment.commentId === commentId)
+            if (comment > -1){
+                post.comments.splice(comment, 1)
+            }
+
+            const deleteComment = await PostService.deleteComment(post._id, commentId)
+        },
+        async deleteReplyComment(postId, commentId, replyId){
+            const post = this.posts.find(post => post._id === postId);
+            const comment = post.comments.find(comment => comment.commentId === commentId)
+            const reply = comment.replys.findIndex(reply => reply.replyId === replyId)
+            if (reply > -1){
+                comment.replys.splice(reply, 1)
+            }
+            const deleteReply = await PostService.deleteReplyComment(postId, commentId, replyId)
         }
 
     },
@@ -336,8 +597,63 @@ export default {
 }
 </script>
 <style scoped>
+.modal {
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.408);
+    }
+
+    .modal-content {
+        /* position: relative; */
+        background-color: #fefefe;
+        margin: 50px auto;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+        border-radius: 5px;
+        height: 80vh;
+        padding: 10px;
+        overflow: auto;
+        width: 50%;
+        /* animation: mymove 1s;
+        animation-fill-mode: forwards;
+        animation-timing-function: ease; */
+    }
+    .modal-content::-webkit-scrollbar{
+        width: 0;
+    }
+
+
+    .header-modal{
+        display: flex;
+        justify-content: space-between;
+        background-color: #ffffff;
+        padding: 10px 20px ;
+        align-items: center;
+    }
+
+    .header-modal > span {
+        cursor: pointer;
+    }
+    .body-modal{
+        padding: 0 20px;
+        padding-bottom: 20px;
+        height: 80%;
+        overflow: auto;
+    }
+    .body-modal::-webkit-scrollbar{
+        width: 0;
+    }
+
+    /* @keyframes mymove {
+        from {top: 0px;}
+        to {top: 100px;}
+    } */
+
 .container {
-    height: 500px;
+    height: 90vh;
     overflow: auto;
 }
 .container::-webkit-scrollbar{
@@ -619,21 +935,42 @@ export default {
     font-size: 14px;
     margin-right: 10px;
 }
-.option-comment{
+.option-comment {
+    position: relative;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+.option-comment > div:nth-child(1){
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
 }
 
-.option-comment > div{
+.option-comment > div > div{
     height: 4px;
     width: 4px;
     border-radius: 50%;
     background-color: #606770;
     margin-right: 2px;
 }
+.menu-option-comment{
+    position: absolute;
+    top: -25px;
+    left: 20px;
+    width: 150px;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
 
+.menu-option-comment > p {
+    font-size: 14px;
+    padding: 8px 12px;
+    cursor: pointer;
+    color: #333333;
+}
 .content-write-reply-comment{
     margin-left: 20px;
     margin-top: 5px;
@@ -701,14 +1038,19 @@ export default {
     font-size: 14px;
     margin-right: 10px;
 }
-.option-comment-reply{
+.option-comment-reply {
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+.option-comment-reply > div:first-child{
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
 }
 
-.option-comment-reply > div{
+.option-comment-reply > div > div{
     height: 4px;
     width: 4px;
     border-radius: 50%;
@@ -717,7 +1059,7 @@ export default {
 }
 .write-comment{
     display: flex;
-    align-items: center;
+    align-items: center;    
     margin-top: 20px;
 }
 
@@ -729,7 +1071,7 @@ export default {
 .content-write-comment{
     margin-left: 10px;
     height: 30px;
-    width: 75%;
+    width: 90%;
     background-color: #f0f2f5;
     border-radius: 15px;
 }
@@ -738,7 +1080,7 @@ export default {
     background-color: transparent;
     border: none;
     height: 100%;
-    width: 90%;
+    width: 93%;
     margin-left: 5px;
     outline: none;
 

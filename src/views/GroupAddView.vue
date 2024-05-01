@@ -174,15 +174,15 @@ export default {
                     status: group.status,
                     country: group.country,
                     affiliatedWebsite: group.affiliatedWebsite,
-                    menbers: [{
+                    members: [{
                         userId: userId,
                         role: "admin",
                     }],
-                    bookShelf: [],
+                    bookshelfs: [],
                     discussions: []
                 }
                 if (data.status === "private") {
-                    data["joinRequest"] = []
+                    data["joinRequests"] = []
                 }
                 const addGroup = await GroupService.create(data);
                 if (addGroup) {

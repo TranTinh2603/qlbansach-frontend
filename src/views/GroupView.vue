@@ -23,28 +23,10 @@
             <div class="content-my-groups">
                 <h3>My groups</h3>
                 <div class="my-groups-list">
-                    <div class="my-group-item">
+                    <div v-for="(myGroup, index) in myGroups" :key="index" class="my-group-item">
                         <img src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/groups/1269147049i/220._UY75_CR10,0,75,75_.jpg" alt="">
                         <div class="info-my-group-item">
-                            <router-link to="/">Goodreads Librarians Group</router-link>
-                            <span class="active">
-                                23 minutes ago
-                            </span>
-                        </div>
-                    </div>
-                    <div class="my-group-item">
-                        <img src="https://images.gr-assets.com/groups/1479936067p3/179584.jpg" alt="">
-                        <div class="info-my-group-item">
-                            <router-link to="/">Our Shared Shelf</router-link>
-                            <span class="active">
-                                23 minutes ago
-                            </span>
-                        </div>
-                    </div>
-                    <div class="my-group-item">
-                        <img src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/groups/1269147049i/220._UY75_CR10,0,75,75_.jpg" alt="">
-                        <div class="info-my-group-item">
-                            <router-link to="/">Oprah's Book Club (Official)</router-link>
+                            <router-link :to="'/community/group/detail/' + myGroup.groupId">{{ myGroup.name }}</router-link>
                             <span class="active">
                                 23 minutes ago
                             </span>
@@ -55,17 +37,17 @@
             <div class="content-popular-groups">
                 <h3>Popular groups</h3>
                 <div class="popular-groups-list">
-                    <div class="popular-group-item">
+                    <div v-for="(group, index) in groups" :key="index" class="popular-group-item">
                         <img src="https://images.gr-assets.com/groups/1479936067p3/179584.jpg" alt="">
                         <div class="info-popular-group-item">
-                            <router-link to="/">Our Shared Shelf</router-link>
+                            <router-link :to="'/community/group/detail/' + group.groupId">{{ group.name }}</router-link>
                             <div class="members-active">
-                                <span>144537 members</span>
+                                <span>{{ group.members ? group.members.length : ''}} members</span>
                                 <div></div>
                                 <span>Active 5 hours ago</span>
                             </div>
                             <div class="description">
-                                <span>OUR SHARED SHELF IS CURRENTLY DORMANT AND NOT MANAGED BY EMMA AND HER TEAM.</span>
+                                <p>{{ group.description }}</p>
                             </div>
                         </div>
                     </div>
@@ -91,6 +73,8 @@ export default {
         return {
             user: {},
             myGroupsCreated: [],
+            myGroups: [],
+            groups: [],
         }
     },
     methods: {
@@ -99,14 +83,22 @@ export default {
             const email = AuthService.user.Email;
             this.user = await UserService.getUserByEmail(email);
             this.getMyGroupsCreated(this.user.userId)
+            this.getMyGroups(this.user.userId)
         },
         async getMyGroupsCreated(userId){
             this.myGroupsCreated = await GroupService.getByUserId(userId)
-            console.log(this.myGroupsCreated);
+        },
+        async getMyGroups(memberId){
+            this.myGroups = await GroupService.getByMemberId(memberId)
+            console.log(this.myGroups);
+        },
+        async getGroups(){
+            this.groups = await GroupService.getAll();
         }
     } ,
     mounted(){
         this.getUser()
+        this.getGroups()
     }
 }
 </script>
@@ -117,6 +109,7 @@ export default {
         border-top: 1px solid #D8D8D8;
     }
     .container-content-1 {
+        width: 750px;
         margin-top: 20px;
     }
     .container-content-1 > h2 {
@@ -226,7 +219,14 @@ export default {
     .description{
         font-size: 14px;
     }
+    .description > p {
+        width: 600px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
     .container-content-2{
+        width: 300px;
         margin-left: 20px;
     }
     .content-create-group{

@@ -1,120 +1,139 @@
 <template>
-    <div class="row">
-        <div class="col-8">
-            <div id="carouselExampleIndicators" class="carousel slide">
-                <div class="carousel-indicators">
-                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
-                        aria-current="true" aria-label="Slide 1"></button>
-                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
-                        aria-label="Slide 2"></button>
-                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
-                        aria-label="Slide 3"></button>
-                </div>
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <img src="https://cdn0.fahasa.com/media/magentothem/banner7/PopmartT1023_Banner_Slide_840x320_1.jpg"
-                            class="d-block w-100 rounded-1" alt="...">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="https://cdn0.fahasa.com/media/magentothem/banner7/FahasaSaleThu3T1123_W1_Banner_840x320.jpg"
-                            class="d-block w-100 rounded-1" alt="...">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="https://cdn0.fahasa.com/media/magentothem/banner7/NCCDinhTiT1131_Slide_840x320.jpg"
-                            class="d-block w-100 rounded-1" alt="...">
+    <div class="home">
+        <div class="categories">
+            <h3>Danh mục sản phẩm</h3>
+            <ul style="display: flex; margin-top: 10px;">
+                <li @click="filterCategory = ''" style="padding: 5px 10px;">Tất cả</li>
+                <li @click="filterCategory = category.categoryId" style="padding: 5px 10px;" v-for="category in categories" :key="category.id">
+                    {{ category.name }}
+                </li>
+            </ul>
+        </div>
+        <div class="products">
+            <h3>Danh sách sản phẩm</h3>
+            <div class="products-list">
+                <div class="product-item" v-for="product in filterProduct()" :key="product.id">
+                    <img  :src="product.image" alt="">
+                    <div>
+                        <p @click="goToDetail(product.bookId)">{{ product.name }}</p>
+                        <p>{{ product.author }}</p>
+                        <p>{{ product.price }} đ</p>
                     </div>
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
-                    data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
-                    data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
             </div>
-        </div>
-        <div class="col-4">
-            <div class="banner-1 row">
-                <img src="https://cdn0.fahasa.com/media/wysiwyg/Thang-11-2023/392x156_sacombankT11.jpg"
-                    class="image-banner rounded-1">
-            </div>
-            <div class="banner-1 row">
-                <img src="https://cdn0.fahasa.com/media/wysiwyg/Thang-11-2023/ZaloPay11_392x156_1.jpg"
-                    class="image-banner rounded-1">
-            </div>
-        </div>
-    </div>
-    <div class="row bg-white rounded-1 mb-3">
-        <h5 class="m-0 p-3">Danh mục sản phẩm</h5>
-        <hr>
-        <div>
-            <ProductPortfolio :category="category" @categoryIndex="handleCategory" />
-        </div>
-    </div>
-    <div class="row bg-white rounded-1">
-        <h5 class="m-0 p-3">Tất cả sản phẩm</h5>
-        <hr>
-        <div class="container">
-            <ProductList :products="products" :discount="25" />
         </div>
     </div>
 </template>
 
 <script>
-import ProductList from '@/components/ProductList.vue';
-import ProductService from '@/services/product.service';
-import ProductPortfolio from '@/components/ProductPortfolio.vue';
-import CategoryService from '../services/category.service';
-
+import BookService from '../services/book.service';
+import CategoryService from '../services/category.service'
 export default {
-    components: {
-        ProductList,
-        ProductPortfolio,
-    },
     data() {
         return {
+            categories: [],
             products: [],
-            category: [],
+            filterCategory: "",
         };
     },
-    methods: {
-        async getCategory() {
+    methods:{
+        async getCategory(){
             try {
-                this.category = await CategoryService.getAll();
-                console.log(this.category);
+                this.categories = await CategoryService.getAll()
             } catch (error) {
-                console.error(error);
+                console.log(error);
             }
         },
-        async getProduct() {
+        async getProduct(){
             try {
-                this.products = await ProductService.getAll();
-                console.log(this.products);
+                this.products = await BookService.getALl()
             } catch (error) {
-                console.error(error);
+                console.log(error);
             }
         },
-        handleCategory(data) {
-            this.$router.push({ name: 'product.category', params: { categoryId: data } });
+        filterProduct(){
+            if (this.filterCategory === ""){
+                return this.products
+            } else {
+                return this.products.filter(product => product.category === this.filterCategory)
+            }
+        },
+        goToDetail(bookId){
+            this.$router.push({ name: 'shop.product.detail', params: { bookId: bookId } });
         }
     },
-    mounted() {
-        this.getProduct();
+    mounted(){
         this.getCategory();
-    },
-}
+        this.getProduct()
+    }
+};
 </script>
 
 <style scoped>
-.banner-1 {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 10px;
+.home {
+    margin: 20px 100px;
 }
 
-.image-banner {
-    width: 100%;
-}</style>
+.categories{
+    margin-bottom: 20px;
+}
+.products {
+    flex: 1;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+li:hover{
+    text-decoration: underline;
+}
+
+a {
+    text-decoration: none;
+    color: #333;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+.products-list {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: auto auto auto auto auto;
+}
+.product-item {
+    margin-top: 20px;
+    width: 200px;
+}
+.product-item > img{
+    width: 150px;
+    height: 220px;
+}
+.product-item > div {
+    width: 150px;
+}
+.product-item > div > p {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+   
+}
+.product-item > div > p:first-child{
+    font-weight: bold;
+    cursor: pointer;
+}
+.product-item > div > p:first-child:hover{
+    text-decoration: underline;
+}
+.product-item > div > p:not(:first-child){
+    font-size: 14px;
+    color: rgb(128, 128, 137);
+}
+</style>

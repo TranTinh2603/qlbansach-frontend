@@ -4,11 +4,11 @@
             <h1>Đăng nhập</h1>
             <div class="content-email">
                 <label class="lable">Email</label>
-                <input type="email" class="input" v-model="userLogin.Email" required>
+                <input type="email" class="input" v-model="userLogin.email" required>
             </div>
             <div class="content-password">
                 <label class="lable">Password</label>
-                <input type="password" class="input" v-model="userLogin.Password" required>
+                <input type="password" class="input" v-model="userLogin.password" required>
             </div>
             <div class="content-button-login">
                 <button class="button-login" type="submit">Đăng nhập</button>
@@ -31,30 +31,30 @@
             <div class="body-modal-content">
                 <div class="name-container">
                     <input type="text" placeholder="FirstName" v-model="user.firstName">
-                    <input type="text" placeholder="Surname" v-model="user.surName">
+                    <input type="text" placeholder="LastName" v-model="user.lastName">
                 </div>
                 <div class="email-container">
-                    <input type="text" placeholder="Email address or Mobile number" v-model="user.Email">
+                    <input type="text" placeholder="Email address or Mobile number" v-model="user.email">
                 </div>
                 <div class="password-container">
-                    <input type="password" placeholder="Password" v-model="user.Password">
+                    <input type="password" placeholder="Password" v-model="user.password">
                 </div>
                 <div class="date-container">
                     <label for="date">Date of birth:</label>
-                    <input type="date" name="date" placeholder="Date" v-model="user.Birthday">
+                    <input type="date" name="date" placeholder="Date" v-model="user.birthday">
                 </div>
                 <div class="gender-container">
                     <label>Gender:</label>
                     <div class="gender-input">  
-                        <input type="radio" name="gender" value="Male" v-model="user.Gender">
+                        <input type="radio" name="gender" value="Male" v-model="user.gender">
                         <label for="male">Male</label><br>
                     </div>
                     <div class="gender-input">
-                        <input type="radio" name="gender" value="Female" v-model="user.Gender">
+                        <input type="radio" name="gender" value="Female" v-model="user.gender">
                         <label for="female">Female</label><br>
                     </div>
                     <div class="gender-input">
-                        <input type="radio" name="gender" value="Custom" v-model="user.Gender" >
+                        <input type="radio" name="gender" value="Custom" v-model="user.gender" >
                         <label for="custom">Custom</label><br>
                     </div>
                 </div>
@@ -71,17 +71,16 @@ export default {
     data() {
         return {
             user: {
-                Email: '',
-                Password: '',
-                Name: '',
+                email: '',
+                password: '',
                 firstName: '',
-                surName: '',
-                Birthday: '',
-                Gender: '',
+                lastName: '',
+                birthday: '',
+                gender: '',
             },
             userLogin: {
-                Email: '',
-                Password: '',
+                email: '',
+                password: '',
             },
             showModal: false,
         };
@@ -90,12 +89,26 @@ export default {
     methods: {
         handleLogin() {
             this.$emit('login', this.userLogin);
-            console.log(this.user);
         },
         handleRegister(){
-            this.user.Name = `${this.user.surName} ${this.user.firstName}`;
-            console.log(this.user);
-            this.$emit('register', this.user);
+            const date = new Date();
+            const timestamp = date.getTime();
+            const randomString = Math.random().toString(36).substring(5);
+            const result = randomString + '_' + timestamp;
+            const data = {
+                userId: result,
+                firstName: this.user.firstName,
+                lastName: this.user.lastName,
+                image: 'https://s.gr-assets.com/assets/nophoto/user/u_111x148-9394ebedbb3c6c218f64be9549657029.png',
+                address: '',
+                email: this.user.email,
+                createdAt: timestamp,
+                birthday: this.user.birthday,
+                password: this.user.password,
+                gender: this.user.gender,
+                friends: []
+            }
+            this.$emit('register', data);
         },
         toggleRegister() {
             this.showModal = !this.showModal;

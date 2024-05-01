@@ -63,11 +63,14 @@ export default {
             }
         },
         handleStatus(userId, bookId){
+            const date = new Date();
+            const timestamp = date.getTime();
             const data = {
                 userId: userId,
                 bookId: bookId,
                 status: "Want To Read",
-                bookshelves: ""
+                bookshelves: "",
+                createdAt: timestamp
             }
             this.$emit('handleStatus', data);
         }

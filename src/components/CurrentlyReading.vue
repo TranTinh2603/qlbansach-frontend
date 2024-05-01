@@ -1,6 +1,6 @@
 <template>
+    <h4>CURRENTLY READING</h4>
     <div class="container">
-        <h4>CURRENTLY READING</h4>
         <div class="content" v-for="book in currentlyReading" :key="book.bookId">
             <img :src="book.image" :alt="book.name">
             <div class="info">
@@ -11,22 +11,22 @@
                     <span>by </span>
                     <router-link class="author-name" :to="{name: 'author.detail', params: {name: book.author}}">{{ book.author }}</router-link>
                 </div>
-                <button class="update-progress">
+                <!-- <button class="update-progress">
                     Update progress
-                </button>
+                </button> -->
             </div>
         </div>
-        <div class="navigation">
-            <router-link class="view-all" to="/my-books">View all books</router-link>
-            <div v-if="showAddBook === false"></div>
-            <p v-if="showAddBook === false" @click="handleShowAddBook()" class="add-book">Add a book</p>
-        </div>
-        <form v-if="showAddBook" class="form-add-book">
-            <input type="text" placeholder="Search book" >
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <i @click="handleShowAddBook()" class="fa-solid fa-xmark"></i>
-        </form>
     </div>
+    <div class="navigation">
+        <router-link class="view-all" to="/my-books">View all books</router-link>
+        <div v-if="showAddBook === false"></div>
+        <p v-if="showAddBook === false" @click="handleShowAddBook()" class="add-book">Add a book</p>
+    </div>
+    <form v-if="showAddBook" class="form-add-book">
+        <input type="text" placeholder="Search book" >
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <i @click="handleShowAddBook()" class="fa-solid fa-xmark"></i>
+    </form>
 </template>
 
 <script>
@@ -50,6 +50,13 @@ export default {
 </script>
 
 <style scoped>
+.container {
+    height: 300px;
+    overflow: auto;
+}
+.container::-webkit-scrollbar{
+    width: 0;
+}
 
 .content{
     margin-top: 10px;

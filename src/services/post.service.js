@@ -28,11 +28,17 @@ class ProductService {
     async updateComment(id, data) {
         return (await this.api.put(`/update-comment/${id}`, data)).data;
     }
+    async updateLikeComment(postId, commentId, data) {
+        return (await this.api.put(`/update/comment/like/${postId}&${commentId}`, data)).data;
+    }
     async updateReplyComment(id, userId, createdAt, data) {
         return (await this.api.put(`/update-reply-comment/${id}&${userId}&${createdAt}`, data)).data;
     }
-    // async delete(id) {
-    //     return (await this.api.delete(`/${id}`)).data;
-    // }
+    async deleteComment(postId, commentId) {
+        return (await this.api.delete(`/comment/${postId}&${commentId}`)).data;
+    }
+    async deleteReplyComment(postId, commentId, replyId) {
+        return (await this.api.delete(`/comment/reply/${postId}&${commentId}&${replyId}`)).data;
+    }
 }
 export default new ProductService();

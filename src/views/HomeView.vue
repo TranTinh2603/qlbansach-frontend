@@ -5,15 +5,15 @@
                 <CurrentlyReading :currentlyReading="currentlyReading" />
             </div>
             <hr>
+            <h5 style="margin-top: 20px;">WANT TO READ</h5>
             <div class="want-to-read">
-                <h5>WANT TO READ</h5>
                 <div class="content-want-to-read">
                     <router-link v-for="(book, index) in wantToRead" :key="index" :to="'/book/detail/' +  book.bookId">
                         <img :src="book.image" alt="">
                     </router-link>
                 </div>
-                <router-link to="/my-books">View all books</router-link>
             </div>
+            <router-link to="/my-books">View all books</router-link>
             <hr>
         </div>
         <div class="update">
@@ -57,7 +57,7 @@ export default {
         async getUser() {
             try {
                 AuthService.checkAuthentication();
-                const email = AuthService.user.Email;
+                const email = AuthService.user.email;
                 this.user = await UserService.getUserByEmail(email);
                 this.getBookByStatus(this.user.userId);
                 this.getRecommended(this.user.userId);
@@ -80,8 +80,7 @@ export default {
             return bookExists;
         },
         async getRecommended(userId){
-            const recommendationsBookIds = await RecommendService.get(userId);
-            
+            const recommendationsBookIds = await RecommendService.get(userId);          
             for (const recommendationsBookId of recommendationsBookIds) {
                 if(this.checkRecommendedBook(recommendationsBookId)){
                     this.getBookByBookId(recommendationsBookId);
@@ -123,7 +122,7 @@ export default {
         },
         async handleStatus(data){
             try {
-                 const create = await MyBookService.create(data);
+                const create = await MyBookService.create(data);
                 window.location.reload();
             } catch (error) {
                 console.log(error);
@@ -138,15 +137,20 @@ export default {
 };
 </script>
 <style scoped>
-.page {
+.page { 
     padding: 10px 20px;
     display: flex;
-    background-color: #f9f7f4;
     justify-content: space-between;
 }
 
 .read{
     width: 300px;
+    height: 90vh;
+    overflow: auto;
+}
+
+.read::-webkit-scrollbar{
+    width: 0;
 }
 
 .currently-reading{
@@ -156,6 +160,11 @@ export default {
 .want-to-read{
     margin-top: 10px;
     margin-bottom: 10px;
+    height: 200px;
+    overflow: auto;
+}
+.want-to-read::-webkit-scrollbar{
+    width: 0;
 }
 .content-want-to-read{
     margin-top: 10px;
