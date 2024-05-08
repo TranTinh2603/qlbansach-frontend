@@ -1,283 +1,132 @@
-<!-- <template>
-    <div>
-        <h3>Giỏ hàng ({{ totalProduct }} sản phẩm)</h3>
-        <div class="row bg-white rounded-2 p-2 mb-2">
-            <div class="col-7 d-flex">
-                <input type="checkbox" v-model="selectedAll">
-                <p class="m-0 ms-2">Chọn tất cả ({{ totalProduct }} sản phẩm)</p>
-            </div>
-            <div class="col-2">
-                <p class="m-0">Số lượng</p>
-            </div>
-            <div class="col-3">
-                <p class="m-0">Thành tiền</p>
-            </div>
-        </div>
-        <div class="row bg-white rounded-2 p-2" v-for="(product, index) in cart" :key="index">
-            <div class="col-7 d-flex">
-                <input type="checkbox" v-model="product.selected">
-                <img :src="product.product.HinhHH" alt="" class="w-25">
-                <div class="d-flex flex-column justify-content-between">
-                    <p class="m-0">{{ product.product.TenHH }}</p>
-                    <strong class="m-0">{{ product.product.Gia }}đ</strong>
-                </div>
-            </div>
-            <div class="col-2 d-flex align-items-center">
-                <div class="d-flex">
-                    <button class="btn btn-sm btn-light" @click="reduceQuantity(index)"><i
-                            class="fa-solid fa-minus"></i></button>
-                    <input class="quantity text-center mx-2" v-model="product.quantity" @input="updateQuantity(index)">
-                    <button class="btn btn-sm btn-light" @click="increaseQuantity(index)"><i
-                            class="fa-solid fa-plus"></i></button>
-                </div>
-            </div>
-            <div class="col-3 d-flex align-items-center">
-                <strong class="m-0 text-danger">{{ totalAmount(index) }}đ</strong>
-                <button class="btn btn-danger btn-sm ms-5" @click="removeProduct(index)">Xóa</button>
-            </div>
-            <hr class="mt-2">
-        </div>
-        <div class="mt-3">
-           
-            <div class="row bg-white rounded-2 p-2 mb-2">
-                    <div class="col-12">
-                        <h4>Hình thức thanh toán và phí vận chuyển</h4>
-                    </div>
-                    <div class="col-4">
-                        <label for="paymentMethod">Hình thức thanh toán:</label>
-                        <select v-model="selectedPaymentMethod" id="paymentMethod">
-                            <option value="cash">Thanh toán khi nhận hàng</option>
-                            <option value="bankTransfer">Chuyển khoản ngân hàng</option>
-                        </select>
-                    </div>
-                    <div class="col-4">
-                        <p for="shippingFee">Phí vận chuyển: <strong>{{ totalSelectedAmount===0? 0 :this.shippingFee }}đ</strong></p>
-                    </div>
-                    <div class="col-4">
-                        <h4>Thông tin nhận hàng</h4>
-                        <p>Họ Tên: <strong>{{ this.user.HoTenKH }}</strong></p>
-                        <p>Địa Chỉ: <strong>{{ this.user.DiaChi }}</strong></p>
-                        <p>Số điện thoại: <strong>{{ this.user.SoDienThoai }}</strong></p>
-                    </div>
-                </div>
-            <p class="m-0">Tổng tiền các sản phẩm đã chọn: <strong>{{ totalSelectedAmount===0 ? totalSelectedAmount : totalSelectedAmount + this.shippingFee }}đ</strong></p>
-            <button class="btn btn-primary mt-2" @click="placeOrder">Đặt hàng</button>
-        </div>
-        
-    </div>
-</template>
-
-<script>
-import OrderDetailService from "../services/orderDetail.service";
-import CustomerService from "../services/customer.service";
-import OrderService from "../services/order.service";
-export default {
-    data() {
-        return {
-            cart: [],
-            totalProduct: 0,
-            selectedAll: false,
-            user: "",
-            selectedPaymentMethod: "cash",
-            shippingFee: 23000,
-        };
-    },
-     computed: {
-        totalSelectedAmount() {
-            return this.cart.reduce((total, product) => {
-                if (product.selected) {
-                    const donGia = parseInt(product.product.Gia.replace(".", ""));
-                    total += parseInt(product.quantity) * donGia;
-                }
-                return total;
-            }, 0);
-        },
-    },
-
-    methods: {
-        async getUser(){
-            const getEmail = localStorage.getItem('authState');
-            if (getEmail){
-            const result = getEmail ? JSON.parse(getEmail) : {};
-            this.user =  await CustomerService.getByEmail(result.user);
-            console.log(this.user);
-            }
-        },
-        async placeOrder() {
-            const selectedProducts = this.cart.filter((product) => product.selected);
-            if (selectedProducts.length === 0) {
-                alert('Vui lòng chọn sản phẩm để đặt hàng.');
-                return;
-            };
-            
-            const orderNumber = Date.now().toString() + Math.floor(Math.random() * 1000);
-            const date = new Date();
-            const formattedDate = date.toLocaleDateString('en-GB')
-            const orderData = {
-                SoDonDH: orderNumber,
-                HH: selectedProducts.map((product) => ({
-                    MSHH: product.product.MSHH,
-                    GiaDatHang: this.totalSelectedAmount,
-                    SoLuong: product.quantity,
-                }))
-            };
-            console.log(this.user.MSKH);
-            const orderInfor = {
-                SoDonDH: orderNumber,
-                MSKH: this.user.MSKH,
-                NgayDH: formattedDate,
-                TrangThaiDH: 0
-            };
-            console.log(orderInfor.NgayDH);
-            try {
-                const response = await OrderDetailService.create(orderData);
-                console.log(orderData.HH);
-                    console.log(response);
-                const response1 = await OrderService.create(orderInfor);
-                this.removeSelectedProducts();
-                alert('Đặt hàng thành công!');
-            } catch (error) {
-                console.error('Đặt hàng thất bại:', error.message);
-            }
-        },
-        removeSelectedProducts() {
-            this.cart = this.cart.filter((product) => !product.selected);
-            this.handleTotalProduct();
-            this.saveCartToLocalStorage();
-        },
-        loadCartFromLocalStorage() {
-            const savedCart = localStorage.getItem('cart');
-            this.cart = savedCart ? JSON.parse(savedCart) : [];
-        },
-        saveCartToLocalStorage() {
-            localStorage.setItem('cart', JSON.stringify(this.cart));
-        },
-
-        handleTotalProduct() {
-            this.totalProduct = this.cart.length;
-        },
-
-        increaseQuantity(index) {
-            this.cart[index].quantity++;
-        },
-
-        reduceQuantity(index) {
-            if (this.cart[index].quantity > 1) {
-                this.cart[index].quantity--;
-            }
-        },
-
-        totalAmount(index) {
-            const product = this.cart[index];
-            const donGia = product.product.Gia.replace(".","");
-            return parseInt(product.quantity) * parseInt(donGia);
-        },
-
-        updateQuantity(index) {
-             const newQuantity = parseInt(this.cart[index].quantity);
-
-            if (isNaN(newQuantity) || newQuantity <= 0) {
-                this.cart[index].quantity = 1;
-                console.error('Số lượng không hợp lệ.');
-                return;
-            }
-        },
-        removeProduct(index) {
-            if(confirm('Bạn có chắc chắn muốn xóa?')){
-            this.cart.splice(index, 1);
-            this.handleTotalProduct();
-            this.saveCartToLocalStorage();}
-        },
-    },
-
-    watch: {
-        selectedAll(newVal) {
-            this.cart.forEach((item) => {
-                item.selected = newVal;
-            });
-        },
-    },
-
-    mounted() {
-        this.loadCartFromLocalStorage();
-        this.handleTotalProduct();
-        this.getUser();
-    },
-};
-</script>
-
-<style scoped>
-.quantity {
-    width: 40px;
-}
-</style> -->
-
-
 <template>
     <div class="cart">
-        <h2>Giỏ hàng</h2>
-        <div v-if="cartItems.length === 0">
-            <p>Giỏ hàng của bạn đang trống.</p>
-        </div>
-        <div v-else>
-            <div v-for="item in cartItems" :key="item.id" class="cart-item">
-                <img :src="item.product.image" :alt="item.product.name">
-                <div class="item-info">
-                    <h3>{{ item.product.name }}</h3>
-                    <p>Giá: {{ item.product.price }}</p>
-                    <p>Số lượng: {{ item.quantity }}</p>
-                    <p>Tổng: {{ totalUnitPrice(item.product.price, item.quantity) }}</p>
-                    <button @click="removeFromCart(item)">Xóa</button>
+        <h2>Giỏ hàng ({{ cartItems.length }} sản phẩm)</h2>
+        <div class="container">
+            <div class="product-content">
+                <div v-if="cartItems.length === 0">
+                    <p>Giỏ hàng của bạn đang trống.</p>
                 </div>
-                
+                <div v-else>
+                    <div class="cart-item-header">
+                        <div>
+                            <input type="checkbox" v-model="selectAll" @change="toggleSelectAll">
+                            <p>Chọn tất cả ({{ cartItems.length }} sản phẩm)</p>
+                        </div>
+                        <p>Số lượng</p>
+                        <p>Thành tiền</p>
+                    </div>
+                    <div v-for="item in cartItems" :key="item.id" class="cart-item">
+                        <div class="item-info">
+                            <input type="checkbox" v-model="item.selected" @change="handler()">
+                            <img :src="item.product.image" :alt="item.product.name">
+                            <div>
+                                <h3>{{ item.product.name }}</h3>
+                                <p style="font-weight: bold;">{{ item.product.price }}đ</p>
+                            </div>
+                        </div>
+                        <div class="quantity">
+                            <button @click="decreaseQuantity(item)">-</button>
+                            <input type="text" v-model="item.quantity">
+                            <button @click="increaseQuantity(item)">+</button>
+                        </div>
+                        <div>
+                            <p style="font-weight: bold; color: #C92127;">{{ totalUnitPrice(item.product.price, item.quantity) }}đ</p>
+                        </div>
+                        <div class="delete">
+                            <i style="color: #646464;" class="fa-solid fa-trash"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="total">
-                <p>Tổng số lượng: {{ totalQuantity }}</p>
-                <p>Tổng tiền: {{ totalPrice }}</p>
+            <div class="into-money">
+                <div class="header">
+                    <p>Thành tiền</p>
+                </div>
+                <div class="total">
+                    <div>
+                        <p>Tổng số lượng: </p>
+                        <p>{{ totalQuantity }}</p>
+                    </div>
+                    <div>
+                        <p>Tổng tiền: </p>
+                        <p style="color: #C92127;">{{ totalPrice }}đ</p>
+                    </div>
+                </div>
+                <button @click="checkout">Thanh toán</button>
             </div>
-            <button class="pay" @click="checkout">Thanh toán</button>
         </div>
     </div>
 </template>
 
 <script>
-// import CartService from '../services/cart.service';
-
 export default {
     data() {
         return {
-            cartItems: []
+            cartItems: [],
+            selectAll: false
         };
     },
     computed: {
         totalQuantity() {
-            return this.cartItems.reduce((total, item) => total + item.quantity, 0);
+            return this.cartItems.reduce((total, item) => total + (item.selected ? item.quantity : 0), 0);
         },
         totalPrice() {
-            return this.cartItems.reduce((total, item) => total + (item.product.price * item.quantity), 0).toFixed(3);
+            return this.cartItems.reduce((total, item) => total + (item.selected ? item.product.price * item.quantity : 0), 0).toFixed(3);
         }
     },
     methods: {
-        // removeFromCart(item) {
-        //     CartService.removeFromCart(item);
-        //     this.cartItems = CartService.getCartItems();
-        // },
+        removeFromCart(item) {
+            const index = this.cartItems.indexOf(item);
+            if (index !== -1) {
+                this.cartItems.splice(index, 1);
+                this.saveCartToLocalStorage();
+            }
+        },
         loadCartFromLocalStorage() {
             const savedCart = localStorage.getItem('cart');
             this.cartItems = savedCart ? JSON.parse(savedCart) : [];
         },
-        checkout() {
-            alert('Chức năng thanh toán chưa được triển khai!');
+        saveCartToLocalStorage() {
+            localStorage.setItem('cart', JSON.stringify(this.cartItems));
         },
-        totalUnitPrice(price, quantity){
-            return (quantity * price).toFixed(3)
-        }
+        saveOrderToLocalStorage(cartItems) {
+            localStorage.setItem('order', JSON.stringify(cartItems));
+        },
+        checkout() {
+            // Thực hiện thanh toán cho các sản phẩm đã chọn
+            const selectedItems = this.cartItems.filter(item => item.selected);
+            this.saveOrderToLocalStorage(selectedItems)
+            this.$router.push({name: 'shop.pay'})
+            // Redirect hoặc thực hiện các bước thanh toán khác
+        },
+        totalUnitPrice(price, quantity) {
+            return (quantity * price).toFixed(3);
+        },
+        toggleSelectAll() {
+            this.cartItems.forEach(item => {
+                item.selected = this.selectAll;
+            });
+        },
+        handler() {
+            this.selectAll = this.cartItems.every(item => item.selected);
+        },
+        increaseQuantity(item) {
+            item.quantity++;
+            this.saveCartToLocalStorage();
+        },
+        decreaseQuantity(item) {
+            if (item.quantity > 1) {
+                item.quantity--;
+                this.saveCartToLocalStorage();
+            }
+        },
     },
     mounted() {
         this.loadCartFromLocalStorage();
     }
 };
 </script>
+
 
 <style scoped>
 .cart {
@@ -287,38 +136,91 @@ export default {
 .cart h2 {
     margin-bottom: 20px;
 }
-
-.cart-item {
-    display: flex;
+.container{
+    display: grid;
+    grid-template-columns: 750px 300px;
+    gap: 20px;
+}
+.cart-item-header{
+    padding: 10px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    display: grid;
+    grid-template-columns: 450px 120px 120px auto;
+    align-items: center;
+    border-radius: 5px;
     margin-bottom: 10px;
+    font-weight: bold;
+}
+.cart-item-header > div {
+    display: flex;
+    gap: 5px;
+}
+.cart-item {
+    display: grid;
+    margin-bottom: 10px;
+    align-items: center;
+    grid-template-columns: 450px 120px 120px auto;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    border-radius: 5px;
+}
+.cart-item > .item-info{
+    display: flex;
 }
 
-.cart-item > img {
+.item-info > input {
+    margin-right: 10px;
+}
+.item-info > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.cart-item > div > img {
     max-width: 100px;
     margin-right: 20px;
 }
-
-.item-info > h3 {
-    margin-bottom: 5px;
+.quantity{
+    display: flex;
+    align-items: center;
 }
 
-.item-info > button {
+.quantity > input {
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    margin: 0 5px;
+    border: 1px solid #e5e0e0;
+    border-radius: 3px;
+}
+.quantity > button {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    background-color: #ffffff;
+    border: 1px solid #e5e0e0;
+    border-radius: 3px;
+    font-size: 16px;
+}
+/* .item-info > button {
     padding: 5px 10px;
     background-color: #dc3545;
     color: #fff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+} */
+.delete{
+    cursor: pointer;
 }
-
 .item-info > button:hover {
     background-color: #c82333;
 }
-
-
-
-.total {
-    margin-top: 20px;
+.into-money{
+    height: 170px;
+    padding: 10px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); 
+    border-radius: 5px;
 }
 .pay{
     margin-top: 10px;
@@ -328,6 +230,36 @@ export default {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+}
+.header{
+    padding-bottom: 10px;
+    border-bottom-width: 1px;
+    border-bottom-color: #ededed;
+    border-bottom-style: solid;
+}
+.header > p {
+    font-size: 18px;
+    font-weight: bold;
+}
+.total{
+    margin-top: 10px;
+}
+.total > div {
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.into-money > button {
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #ffffff;
+    font-weight: bold;
 }
 </style>
 

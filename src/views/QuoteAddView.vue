@@ -14,7 +14,7 @@
                     <div class="field-quote">
                         <label class="lable" for="quote">Quote&nbsp;<span>(No need for quotation marks)</span></label>
                         <br>
-                        <textarea :class="this.message.quote ? 'error input' : 'input'" ref="quote" name="qoute" id="qoute" cols="30" rows="5" v-model="quote.content"></textarea>
+                        <textarea :class="this.message.quote ? 'error input' : 'input'"  name="qoute" id="qoute" cols="30" rows="5" v-model="quote.content"></textarea>
                         <p v-if="this.message.quote" class="message-error">{{ this.message.quote }}</p>
                     </div>
                     <div class="field-author">
@@ -117,16 +117,17 @@ export default {
             } else if (!this.quote.author) {
                 this.message.author = 'Please enter author!';
                 this.$refs.author.focus();
-            }
-            socket.emit('addQuote', dataQuote)
-            socket.once('addQuote', (dataQuote) => {
-                if (!dataQuote.message) {
-                    alert('Quote added successfully!')
-                    this.$router.push({ name: 'community.quote' });
-                } else {
-                    alert(dataQuote.message)
-                }
-            })
+            } else {
+                socket.emit('addQuote', dataQuote)
+                socket.once('addQuote', (dataQuote) => {
+                    if (!dataQuote.message) {
+                        alert('Quote added successfully!')
+                        this.$router.push({ name: 'community.quote' });
+                    } else {
+                        alert(dataQuote.message)
+                    }
+                })
+        }
         },
         async getAuthor(e){
             clearTimeout(this.authorTimeoutId);

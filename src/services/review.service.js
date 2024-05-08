@@ -31,6 +31,9 @@ class ReviewService {
     async updateReview(reviewId, data) {
         return (await this.api.put(`/review/${reviewId}`, data)).data;
     }
+    async updateLikeReview(reviewId, data) {
+        return (await this.api.put(`/review/like/${reviewId}`, data)).data;
+    }
     async deleteReview(reviewId) {
         return (await this.api.delete(`/review/${reviewId}`)).data;
     }

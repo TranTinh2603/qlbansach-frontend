@@ -19,7 +19,7 @@
                             <div v-if="comment.userId === topic.createdBy" class="mod-message-item">
                                 <div class="header-mod-message-item">
                                     <p><b>message {{ index + 1 }}</b>: by <router-link to="/">{{ comment.userId }}</router-link></p>
-                                    <p>21 hours, 6 min ago {{ comment.createdAt }}</p>
+                                    <p>21 hours</p>
                                 </div>
                                 <div class="body-message-item">
                                     <div>
@@ -42,7 +42,7 @@
                             <div v-else class="other-message-item">
                                 <div class="header-other-message-item">
                                     <p><b>message {{ index + 1 }}</b>: by <router-link to="/">{{ comment.userId }}</router-link></p>
-                                    <p>21 hours, 6 min ago {{ comment.createdAt }}</p>
+                                    <p>21 hours</p>
                                 </div>
                                 <div class="body-message-item">
                                     <div>
@@ -112,7 +112,7 @@ export default {
         async getUser(){
             try {
                 AuthService.checkAuthentication();
-                const email = AuthService.user.Email;
+                const email = AuthService.user.email;
                 this.user = await UserService.getUserByEmail(email);
             } catch (error) {
                 console.log(error);

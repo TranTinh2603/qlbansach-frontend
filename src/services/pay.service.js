@@ -1,23 +1,26 @@
 import createApiClient from "./api.service";
 
-class OrderService {
-    constructor(baseUrl = "/api/orders") {
+class PayService {
+    constructor(baseUrl = "/api/pay") {
         this.api = createApiClient(baseUrl);
     }
-    async getAll() {
-        return (await this.api.get("/")).data;
-    }
-    async create(data) {
+    async getUrl(data) {
         return (await this.api.post("/", data)).data;
     }
-    async getByMSKH(data) {
-        return (await this.api.post(`/mskh`, data)).data;
-    }
+    // async create(data) {
+    //     return (await this.api.post("/", data)).data;
+    // }
     // async deleteAll() {
     //     return (await this.api.delete("/")).data;
     // }
     // async get(id) {
     //     return (await this.api.get(`/${id}`)).data;
+    // }
+    // async getByName(name) {
+    //     return (await this.api.get(`/search/?text=${name}`)).data;
+    // }
+    // async getMSHH(id) {
+    //     return (await this.api.get(`/mshh/${id}`)).data;
     // }
     // async update(id, data) {
     //     return (await this.api.put(`/${id}`, data)).data;
@@ -26,4 +29,4 @@ class OrderService {
     //     return (await this.api.delete(`/${id}`)).data;
     // }
 }
-export default new OrderService();
+export default new PayService();

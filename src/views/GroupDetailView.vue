@@ -172,7 +172,7 @@ export default {
     methods: {
         async getUser(){
             AuthService.checkAuthentication()
-            const email = AuthService.user.Email
+            const email = AuthService.user.email
             this.user = await UserService.getUserByEmail(email);
         },
         async getGroup(){

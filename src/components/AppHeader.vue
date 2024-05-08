@@ -124,7 +124,7 @@
                         <i class="fa-solid fa-user"></i>
                     </div>
                     <ul v-if="activeDropdown === 'user'" class="dropdown-menu-user">
-                        <h4>{{ user.fristName + ' ' + user.lastName}}</h4>
+                        <h4>{{ user.firstName + ' ' + user.lastName}}</h4>
                         <li><router-link to="/user/profile">Profile</router-link></li>
                         <li><router-link to="/user/friends">Friends</router-link></li>
                         <li><router-link to="/user/groups">Groups</router-link></li>

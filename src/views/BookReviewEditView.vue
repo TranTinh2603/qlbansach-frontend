@@ -95,12 +95,14 @@ export default {
                     bookId: review.bookId,
                     review: review.review,
                     reviewId: review.reviewId,
-                    createdAt: timestamp
+                    createdAt: timestamp,
+                    likes: review.likes,
+                    comments: review.comments
                 }
                 const updateReview = await ReviewService.updateReview(this.reviewId, data)
                 if (updateReview) {
                     alert('Update review successfully!')
-                    window.location.reload()
+                    this.$router.push({ name: 'book.detail', params: { id: review.bookId } })
                 } else {
                     alert('Update review failed!')
                 }

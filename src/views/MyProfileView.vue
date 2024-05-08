@@ -11,19 +11,19 @@
                     </div>
                 </div>
                 <div class="name-profile">
-                    <h2>{{ user.Name }} <router-link to="/user/profile/edit">(edit profile)</router-link></h2>
+                    <h2>{{ user.firstName + ' ' + user.lastName }} <router-link to="/user/profile/edit">(edit profile)</router-link></h2>
                     <div class="info-user">
                         <div class="title-profile">
                             Address
                         </div>
                         <div class="value-profile">
-                           {{ user.Address }}
+                           {{ user.address }}
                         </div>
                         <div class="title-profile">
                             Birthday   
                         </div>
                         <div class="value-profile">
-                           {{ user.Birthday }}
+                           {{ user.birthday }}
                         </div>
                     </div>
                 </div>
@@ -33,10 +33,9 @@
                     <h2>TRẦN'S BOOKSHELVES</h2>
                 </div>
                 <div class="body-content-bookshelves">
-                    <router-link to="/">currently reading (0)</router-link>
-                    <router-link to="/">currently reading (0)</router-link>
-                    <router-link to="/">currently reading (0)</router-link>
-                    <router-link to="/">currently reading (0)</router-link>
+                    <router-link to="/">Read (4)</router-link>
+                    <router-link to="/">Want To Read (3)</router-link>
+                    <router-link to="/">Currently Reading (2)</router-link>
                 </div>
                 <div class="more-content-bookshelves"><router-link to="/">More...</router-link></div>
             </div>
@@ -97,9 +96,9 @@
                             <img src="https://s.gr-assets.com/assets/nophoto/user/u_50x66-632230dc9882b4352d753eedf9396530.png" alt="">
                         </div>
                         <div class="name-info-friends">
-                            <router-link to="/">Trần Tính</router-link>
+                            <router-link to="/">Nguyễn Văn A</router-link>
                             <br>
-                            <span>14 books | 1 friends</span>
+                            <span>7 books | 1 friends</span>
                         </div>
                     </div>
                     <div class="info-friends">
@@ -109,7 +108,7 @@
                         <div class="name-info-friends">
                             <router-link to="/">Trần Tính</router-link>
                             <br>
-                            <span>14 books | 1 friends</span>
+                            <span>2 books | 1 friends</span>
                         </div>
                     </div>
                     <div class="info-friends">
@@ -117,7 +116,7 @@
                             <img src="https://s.gr-assets.com/assets/nophoto/user/u_50x66-632230dc9882b4352d753eedf9396530.png" alt="">
                         </div>
                         <div class="name-info-friends">
-                            <router-link to="/">Trần Tính</router-link>
+                            <router-link to="/">Nguyễn Văn B</router-link>
                             <br>
                             <span>14 books | 1 friends</span>
                         </div>
@@ -135,12 +134,12 @@
                     <div class="image-people-following">
                         <img src="https://images.gr-assets.com/authors/1305183182p5/4634532.jpg" alt="">
                     </div>
-                    <div class="image-people-following">
+                    <!-- <div class="image-people-following">
                         <img src="https://images.gr-assets.com/authors/1305183182p5/4634532.jpg" alt="">
                     </div>
                     <div class="image-people-following">
                         <img src="https://images.gr-assets.com/authors/1305183182p5/4634532.jpg" alt="">
-                    </div> 
+                    </div>  -->
                 </div>
                 <div class="more-follower">
                     <router-link to="/">More follower...</router-link>
@@ -169,7 +168,7 @@ export default {
     methods: {
         async getUser(){
             AuthService.checkAuthentication();
-            const email = AuthService.user.Email;
+            const email = AuthService.user.email;
             this.user = await UserService.getUserByEmail(email);
             this.getBookByStatus(this.user.userId)
         },

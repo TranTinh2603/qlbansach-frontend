@@ -139,7 +139,7 @@ export default {
         async getUser(){
             try {
                 AuthService.checkAuthentication();
-                const email = AuthService.user.Email;
+                const email = AuthService.user.email;
                 this.user = await UserService.getUserByEmail(email)
             } catch (error) {
                 console.log(error);

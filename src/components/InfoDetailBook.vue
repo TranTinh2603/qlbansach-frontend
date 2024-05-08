@@ -86,25 +86,26 @@
                     <h3>My review</h3>
                     <div class="content-my-review">
                         <div class="info-my-review">
-                            <img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1691147319i/11273677.jpg" alt="">
-                            <p>{{ user.fristName + ' ' + user.lastName }}</p>
+                            <img :src="user.image" alt="">
+                            <p>{{ user.firstName + ' ' + user.lastName }}</p>
                             <p>{{ myReviews.length }} reviews</p>
                         </div>
                         <div class="rate-my-review">
-                            <div class="star-rate-my-review">
+                            <div v-if="getMyReview(reviews, user.userId)" class="star-rate-my-review">
                                 <i v-for="start in getMyReview(reviews, user.userId) ? getMyReview(reviews, user.userId).rating : 0" class="fa-solid fa-star"></i>
                                 <i v-for="emtyStart in 5 - (getMyReview(reviews, user.userId) ? getMyReview(reviews, user.userId).rating : 0)" class="fa-regular fa-star"></i>
                             </div>
+                            <p v-else>What do you think?</p>
                             <div class="button-write-a-review">
                                 <div v-if="getMyReview(reviews, user.userId)">
                                     <p>{{ getMyReview(reviews, user.userId).review }}</p>
                                     <router-link class="edit-review" :to="'/book/review/edit/' + (getMyReview(reviews, user.userId) ? getMyReview(reviews, user.userId).reviewId : '')">Edit Review</router-link>
                                 </div>
-                                <router-link :to="'/book/review/add/' + (book.bookId ? book.bookId : '')" v-else>Write a Review</router-link>
+                                <router-link v-else :to="'/book/review/add/' + (book ? book.bookId : '')">Write a Review</router-link>
                             </div>
                         </div>
                         <div class="time-my-review">
-                            <p>{{ getMyReview(reviews, user.userId) ?  getMyReview(reviews, user.userId).createdAt : '' }}</p>
+                            <p>{{ formatTimestamp(getMyReview(reviews, user.userId) ? getMyReview(reviews, user.userId).createdAt : 0) }}</p>
                         </div>
                     </div>
                 </div>
@@ -170,25 +171,22 @@
                 </div>
                 <div v-if="getCommentBook().length > 0" v-for="(comment, index) in getCommentBook()" :key="index" class="detail-community-reviews">
                     <div class="info-user-community-reviews">
-                        <img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1630482892i/11378463.jpg" alt="">
-                        <h4>{{ getUserReview(comment.userId) ? getUserReview(comment.userId).Name : '' }}</h4>
+                        <img :src="getUserReview(comment.userId) ? getUserReview(comment.userId).image : ''" alt="">
+                        <h4>{{ getUserReview(comment.userId) ? getUserReview(comment.userId).firstName + ' ' + getUserReview(comment.userId).lastName : '' }}</h4>
                         <div>
                             <p>{{ countUserCommunityReviews(comment.userId).length }} reviews</p>
-                            <p>741 followers</p>
+                            <!-- <p>741 followers</p> -->
                         </div>
-                        <button>Follow</button>
+                        <!-- <button>Follow</button> -->
                     </div>
                     <div class="content-user-community-reviews">
                         <div class="content-user-rate-and-time">
                             <div class="content-user-rate">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
+                                <i v-for="star in comment ? comment.rating : 0" class="fa-solid fa-star"></i>
+                                <i v-for="emptyStar in comment ? 5 - comment.rating : 0" class="fa-regular fa-star"></i>
                             </div>
                             <div class="content-user-time">
-                                <span>25/02/2024</span>
+                                <span>{{ formatTimestamp(comment.createdAt) }}</span>
                             </div>
                         </div>
                         <div class="content-user-comment">
@@ -197,10 +195,13 @@
                             </span>
                         </div>
                         <div class="content-user-like-comment">
-                            <p>32 like</p>
+                            <div>
+                                <p>{{ comment ? comment.likes.length : 0 }} likes </p>
+                                <p>{{ comment ? comment.comments.length : 0 }} comments</p>
+                            </div>
                             <div class="like-and-comment">
-                                <div>
-                                    <i class="fa-regular fa-heart"></i>
+                                <div @click="handleLikeReview(comment)">
+                                    <i style="color: #ff3040;" :class=" (checkLike(comment) ? 'fa-solid' :  'fa-regular') + ' fa-heart'"></i>
                                     <p>Like</p>
                                 </div>
                                 <div>
@@ -210,10 +211,8 @@
                             </div>
                         </div>
                         <hr>
-                    </div>
-                    
-                </div>
-                
+                    </div>   
+                </div>               
             </div>
         </div>
     </template>
@@ -412,6 +411,36 @@
                 if (this.currentPage > 1) {
                     this.currentPage--;
                 }
+            },
+            formatTimestamp(timestamp) {
+                if (timestamp === 0){
+                    return ''
+                } else {
+                    const date = new Date(timestamp);
+                    const day = String(date.getDate()).padStart(2, '0');
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const year = date.getFullYear();
+                    return `${day}/${month}/${year}`;
+                }
+            },
+            async handleLikeReview(review){
+                try {
+                    const checkLike = review.likes.indexOf(this.user.userId)
+                    if (checkLike > -1) {
+                        review.likes.splice(checkLike, 1)
+                    } else {
+                        review.likes.push(this.user.userId);
+                    }
+                    const data = {
+                        userId: this.user.userId,
+                    }
+                    const updateLikeReview = await ReviewService.updateLikeReview(review.reviewId, data)
+                } catch (error) {
+                    console.log(error);
+                }
+            },
+            checkLike(review){
+                return review.likes.some(like => like === this.user.userId)
             }
 
         },
@@ -640,7 +669,11 @@
         font-weight: 600;
         margin-bottom: 5px;
     }
-
+    .rate-my-review > p {
+        margin-bottom: 5px;
+        font-size: 20px;
+        font-weight: 600;
+    }
     .star-rate-my-review{
         margin-bottom: 10px;
         font-size: 18px;
@@ -661,6 +694,7 @@
         justify-content: center;
         align-items: center;
         font-weight: 600;
+        width: 150px;
     }
     .edit-review:hover{
         background-color: rgba(0, 0, 0, 0.05);
@@ -678,6 +712,7 @@
         color: #ffffff;
         border: none;
         border-radius: 24px;
+        width: 150px;
     }
      .button-write-a-review > a:hover{
         background-color: #4f4f4d;
@@ -752,7 +787,9 @@
         display: flex;
         margin-top: 20px;
     }
-
+    .info-user-community-reviews{
+        width: 120px;
+    }
     .info-user-community-reviews > img {
         width: 56px;
         height: 56px;
@@ -762,7 +799,7 @@
         margin-top: 5px;
     }
     .info-user-community-reviews > div {
-        margin-top: 10px;
+        margin-top: 5px;
         margin-bottom: 10px;
         color: #707070;
     }
@@ -785,20 +822,23 @@
     }
     .content-user-rate{
         color: #e87400;
-        margin-bottom: 20px;
+        font-size: 14px;
     }
     .content-user-rate > i {
         margin-right: 5px;
     }
     .content-user-comment{
         line-height: 25px;
-        margin-bottom: 20px;
+        margin: 5px 0;
     }
      .content-user-like-comment{
-        margin-bottom: 20px;
+        margin-bottom: 10px;
      }
-    .content-user-like-comment > p {
-        font-weight: 600;
+    .content-user-like-comment > div:first-child {
+        display: flex;
+        font-size: 14px;
+        color: #707070;
+        gap: 5px;
     }
     .like-and-comment{
         display: flex;
@@ -806,7 +846,11 @@
     }
     .like-and-comment > div{
         display: flex;
-        margin-right: 10px;
+        align-items: center;
+        margin-right: 20px;
+        font-size: 14px;
+        cursor: pointer;
+        user-select: none;
     }
     .like-and-comment > div > i{
         margin-right: 5px;

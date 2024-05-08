@@ -51,9 +51,9 @@
                                         <i class="fa-solid fa-star"></i>
                                     </div>
                                     <div>
-                                        <span>4.07</span>
+                                        <span>4.0</span>
                                         <span> avg rating - </span>
-                                        <span>1234</span>
+                                        <span>2</span>
                                         <span> rating</span>
                                     </div>
                                 </div>
@@ -73,11 +73,11 @@
                     </tr>
                     <tr style="border-bottom: 1px solid #ddd;">
                             <td style="width: 60px;">
-                                <img src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1691147319i/11273677._SY75_.jpghttps://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1691147319i/11273677._SY75_.jpg" alt="">
+                                <img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1545314990i/10433999.jpg" alt="">
                             </td>
                             <td>
                                 <div>
-                                    <h4>Mắt biếc</h4>
+                                    <h4>Tôi thấy hoa vàng trên cỏ xanh</h4>
                                     <div style="font-size: 14px;">
                                         <span>by </span>
                                         <router-link to="/a">Nguyễn Nhật Ánh</router-link>
@@ -91,9 +91,9 @@
                                             <i class="fa-solid fa-star"></i>
                                         </div>
                                         <div>
-                                            <span>4.07</span>
+                                            <span>4.0</span>
                                             <span> avg rating - </span>
-                                            <span>1234</span>
+                                            <span>3</span>
                                             <span> rating</span>
                                         </div>
                                     </div>

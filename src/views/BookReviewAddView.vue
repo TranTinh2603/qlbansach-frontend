@@ -3,7 +3,7 @@
         <div class="header-content">
             <router-link :to="'/book/detail/' + book.bookId">{{ book.name }}</router-link>
             <i class="fa-solid fa-greater-than"></i>
-            <p>Edit Review</p>
+            <p>Add Review</p>
         </div>
         <div class="book-content">
             <img :src="book.image" alt="">
@@ -81,10 +81,15 @@ export default {
                     reviewId: result,
                     review: this.review.review,
                     createdAt: timestamp,
-                    rating: this.review.rating
+                    rating: this.review.rating,
+                    likes: [],
+                    comments: []
                 }
                 const addReview = await ReviewService.create(data)
-                console.log(addReview);
+                if (addReview) {
+                    alert('Create review successfully!')
+                    this.$router.push({name: 'book.detail', params: {id: this.bookId}})
+                }
            } catch (error) {
                 console.log(error);
            }

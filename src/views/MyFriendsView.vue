@@ -31,7 +31,7 @@
                 <div class="sort">
                     <form class="form-sort">
                         <select>
-                            <option value="1">1</option>
+                            <option value="1">Tất cả</option>
                             <option value="1">1</option>
                             <option value="1">1</option>
                             <option value="1">1</option>
@@ -42,8 +42,8 @@
                 <div  v-for="(friend, index) in friends" :key="index" class="item-friend-list">
                     <img src="https://s.gr-assets.com/assets/nophoto/user/u_50x66-632230dc9882b4352d753eedf9396530.png" alt="">
                     <div class="info-friends">
-                        <p>{{ friend.Name }}</p>
-                        <span>3 books | {{ friend.Friends && friend.Friends.length }} friends</span>
+                        <p>{{ friend.firstName + ' ' + friend.lastName }}</p>
+                        <span>3 books | {{ friend.friends && friend.friends.length }} friends</span>
                     </div>
                 </div>
             </div>
@@ -91,9 +91,9 @@ export default {
         async getUserByEmail(){
             AuthService.checkAuthentication();
             const email = AuthService.user;
-            this.user = await UserService.getUserByEmail(email.Email);
+            this.user = await UserService.getUserByEmail(email.email);
             console.log(this.user);
-            for (const friend of this.user.Friends){
+            for (const friend of this.user.friends){
                 this.getFriend(friend);
             }
             this.getFriendRequests(this.user.userId)

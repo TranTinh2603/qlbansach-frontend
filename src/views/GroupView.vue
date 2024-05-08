@@ -80,7 +80,7 @@ export default {
     methods: {
         async getUser(){
             AuthService.checkAuthentication();
-            const email = AuthService.user.Email;
+            const email = AuthService.user.email;
             this.user = await UserService.getUserByEmail(email);
             this.getMyGroupsCreated(this.user.userId)
             this.getMyGroups(this.user.userId)
@@ -90,7 +90,6 @@ export default {
         },
         async getMyGroups(memberId){
             this.myGroups = await GroupService.getByMemberId(memberId)
-            console.log(this.myGroups);
         },
         async getGroups(){
             this.groups = await GroupService.getAll();

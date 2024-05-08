@@ -9,13 +9,13 @@
                 </div>
                 <div class="body-content-list-friends">
                     <div v-for="(friend, index) in friends" :key="index" @click="getMessage(user.userId, friend.userId)" class="item-friend-message">
-                        <img src="https://scontent.fvca1-2.fna.fbcdn.net/v/t1.30497-1/143086968_2856368904622192_1959732218791162458_n.png?stp=dst-png_p100x100&_nc_cat=1&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeEi0VkQuBcTZEalh9eTHdvpso2H55p0AlGyjYfnmnQCUdc4ngjpztgdBloDcewFFirlKBe3f7nQMiV8K1-RKQfE&_nc_ohc=ydxhzA9VjJsAX8IEi-C&_nc_ht=scontent.fvca1-2.fna&cb_e2o_trans=q&oh=00_AfA2hvPAJfDnNmze_QI2lGOTFwKQlJUOx0O-OrAMceYvqg&oe=661F3A38" alt="">
+                        <img src="https://s.gr-assets.com/assets/nophoto/user/u_225x300-c928cbb998d4ac6dd1f0f66f31f74b81.png" alt="">
                         <div class="friend-name-message">
-                            <p>{{ friend.Name }}</p>
-                            <div class="message">
+                            <p>{{ friend.firstName + ' ' + friend.lastName }}</p>
+                            <!-- <div class="message">
                                 <p>Hello</p>
                                 <p>2 ngày</p>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -24,17 +24,17 @@
         <div v-if="friendActive !== ''" class="content-detail-messages">
             <div class="header-content-detail-message">
                 <div class="info-friend-message">
-                    <img src="https://scontent.fvca1-2.fna.fbcdn.net/v/t1.30497-1/143086968_2856368904622192_1959732218791162458_n.png?stp=dst-png_p100x100&_nc_cat=1&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeEi0VkQuBcTZEalh9eTHdvpso2H55p0AlGyjYfnmnQCUdc4ngjpztgdBloDcewFFirlKBe3f7nQMiV8K1-RKQfE&_nc_ohc=ydxhzA9VjJsAX8IEi-C&_nc_ht=scontent.fvca1-2.fna&cb_e2o_trans=q&oh=00_AfA2hvPAJfDnNmze_QI2lGOTFwKQlJUOx0O-OrAMceYvqg&oe=661F3A38" alt="">
+                    <img src="https://s.gr-assets.com/assets/nophoto/user/u_225x300-c928cbb998d4ac6dd1f0f66f31f74b81.png" alt="">
                     <div class="name-status">
-                        <p>{{ friendActive.Name }}</p>
-                        <p>Đang hoạt động</p>
+                        <p>{{ friendActive.firstName + ' ' +  friendActive.lastName }}</p>
+                        <!-- <p>Đang hoạt động</p> -->
                     </div>
                 </div>
             </div>
             <div class="body-content-detail-message">
                 <div v-for="(message, index) in messages" :key="index">
                     <div v-if="message.senderId === friendActive.userId && message.content !== undefined && message.content !== ''" class="your-message">
-                        <img src="https://scontent.fvca1-2.fna.fbcdn.net/v/t1.30497-1/143086968_2856368904622192_1959732218791162458_n.png?stp=dst-png_p100x100&_nc_cat=1&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeEi0VkQuBcTZEalh9eTHdvpso2H55p0AlGyjYfnmnQCUdc4ngjpztgdBloDcewFFirlKBe3f7nQMiV8K1-RKQfE&_nc_ohc=ydxhzA9VjJsAX8IEi-C&_nc_ht=scontent.fvca1-2.fna&cb_e2o_trans=q&oh=00_AfA2hvPAJfDnNmze_QI2lGOTFwKQlJUOx0O-OrAMceYvqg&oe=661F3A38" alt="">
+                        <img src="https://s.gr-assets.com/assets/nophoto/user/u_225x300-c928cbb998d4ac6dd1f0f66f31f74b81.png" alt="">
                         <div class="content-your-message">
                             <div class="your-message-1">
                                 <p>{{ message.content }}</p>
@@ -57,10 +57,10 @@
         </div>
         <div v-if="friendActive !== ''" class="content-info-friend">
             <div class="header-content-info-friend">
-                <img src="https://scontent.fvca1-2.fna.fbcdn.net/v/t1.30497-1/143086968_2856368904622192_1959732218791162458_n.png?stp=dst-png_p100x100&_nc_cat=1&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeEi0VkQuBcTZEalh9eTHdvpso2H55p0AlGyjYfnmnQCUdc4ngjpztgdBloDcewFFirlKBe3f7nQMiV8K1-RKQfE&_nc_ohc=ydxhzA9VjJsAX8IEi-C&_nc_ht=scontent.fvca1-2.fna&cb_e2o_trans=q&oh=00_AfA2hvPAJfDnNmze_QI2lGOTFwKQlJUOx0O-OrAMceYvqg&oe=661F3A38" alt="">
+                <img src="https://s.gr-assets.com/assets/nophoto/user/u_225x300-c928cbb998d4ac6dd1f0f66f31f74b81.png" alt="">
                 <div class="name-info">
-                    <p>{{ friendActive.Name }}</p>
-                    <p>Đang hoạt động</p>
+                    <p>{{ friendActive.firstName + ' ' + friendActive.lastName }}</p>
+                    <!-- <p>Đang hoạt động</p> -->
                 </div>
             </div>
             <div class="body-content-info-friend">
@@ -69,10 +69,10 @@
                         <i class="fa-regular fa-circle-user"></i>
                         <p>Trang cá nhân</p>
                     </div>
-                    <div class="action-2">
+                    <!-- <div class="action-2">
                         <i class="fa-solid fa-bell"></i>
                         <p>Tắt thông báo</p>
-                    </div>
+                    </div> -->
                     <div class="action-3">
                         <i class="fa-solid fa-magnifying-glass"></i>
                         <p>Tìm kiếm</p>
@@ -104,10 +104,10 @@ export default {
     methods: {
         async getUser(){
             AuthService.checkAuthentication()
-            const email = AuthService.user.Email;
+            const email = AuthService.user.email;
             this.user = await UserService.getUserByEmail(email);
             socket.emit('setUserId', this.user.userId)
-            for (const userId of this.user.Friends){
+            for (const userId of this.user.friends){
                 this.getFriend(userId)
             }
         },
@@ -370,7 +370,7 @@ export default {
     }
     .action{
         display: flex;
-        justify-content: space-between;
+        justify-content: space-around;
     }
     .action-1{
         display: flex;

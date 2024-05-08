@@ -2,7 +2,6 @@
     <header>
         <div class="container">
             <div class="logo">
-                <!-- Đặt logo của bạn ở đây -->
                 <router-link to="/"> 
                     <h3>Book</h3>
                     <p>Social Network</p>
@@ -10,12 +9,18 @@
             </div>
             <nav>
                 <ul>
-                    <li><a href="#">Trang chủ</a></li>
+                    <li><router-link to="/shop">Trang chủ</router-link></li>
                     <li><a href="#">Sản phẩm</a></li>
                     <li><a href="#">Giới thiệu</a></li>
                     <li><a href="#">Liên hệ</a></li>
                 </ul>
             </nav>
+            <div class="search">
+                <form class="form-search">
+                    <input type="text" placeholder="Search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </form>
+            </div>
             <div class="cart-icon">
                 <i class="fa-solid fa-bell"></i>
                 <router-link to="/shop/cart">
@@ -35,8 +40,11 @@ export default {
 
 <style scoped>
 header {
-     background-color: #f4f1ea;
+    background-color: #f4f1ea;
     padding: 10px;
+    position: fixed;
+    width: 100%;
+    top: 0;
 }
 
 .container {
@@ -44,11 +52,23 @@ header {
     align-items: center;
     justify-content: space-between;
 }
-
-.logo img {
-    max-width: 100px;
+.form-search{   
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
 }
-
+.form-search > input {
+    border: none;
+    background-color: transparent;
+    padding: 5px 3px;
+    width: 200px;
+    font-family: 'Times New Roman', Times, serif;
+    outline: none;
+}
+.form-search > i {
+    color: #65676b;
+    margin-right: 5px;
+}
 nav ul {
     list-style: none;
     padding: 0;

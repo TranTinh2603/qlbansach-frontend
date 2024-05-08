@@ -242,7 +242,9 @@ export default {
                     rating: book.currentRating,
                     review: "",
                     createdAt: timestamp,
-                    reviewId: result
+                    reviewId: result,
+                    likes: [],
+                    comments: []
                 }
                 const message = await ReviewService.create(data);
                 alert(message.message);
@@ -349,7 +351,9 @@ export default {
                         userId: userId,
                         rating: review.rating,
                         review: book.review,
-                        createdAt: timestamp
+                        createdAt: timestamp,
+                        likes: review.likes,
+                        comments: review.comments
                     }
                     const updateReview = await ReviewService.updateReview(review.reviewId, data);
                     console.log(updateReview);

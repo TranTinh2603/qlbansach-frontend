@@ -17,7 +17,7 @@
                 <div class="popular-quotes-list">
                     <div  v-if="quotes.length > 0" v-for="(quote, index) in filterQuotes()" :key="index" class="popular-quote-item">
                         <div class="content-popular-quote-item">
-                            <img src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/authors/1429114964i/9810._UX200_CR0,14,200,200_.jpg" alt="">
+                            <img src="https://images.gr-assets.com/authors/1305183182p5/4634532.jpg" alt="">
                             <div class="info-quote-item">
                                 <span>“{{ quote.content }}”</span>
                                 <span>― {{ quote.author + ', '+ quote.book }}</span>

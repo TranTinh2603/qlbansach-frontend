@@ -78,13 +78,11 @@
     </div>
 </template>
 <script>
-import router from '../router';
 
 export default {
     props: {
         groupId: { type: String, default: "" }
     },
-    components: { router }
 }
 </script>
 <style scoped>
